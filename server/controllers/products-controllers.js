@@ -1,11 +1,11 @@
 const uuid = require('uuid/v4');
 const { validationResult } = require('express-validator');
+const Products = require('../models/products')
 
 const HttpError = require('../models/http-error');
 
 let DUMMY_PRODUCTS = [
   {
-    id: 's1',
     categoryId: '001',
     name: 'prod1',
     description: 'desc',
@@ -15,17 +15,26 @@ let DUMMY_PRODUCTS = [
   }
 ];
 
-const getProducts = (req,res,next) =>{
-    res.status(200).json({products: DUMMY_PRODUCTS});
+const getProducts = async (req,res,next) =>{
+  let products;
+  try {
+    products = await Products.find();
+  } catch (error) {
+    return next('Something went wrong', 500);
+  }
+    res.status(200).json({products});
 }
 
-const getProductsById = (req, res, next) => {
+const getProductsById = async(req, res, next) => {
     const productId = req.params.pid;
-  
-    const product = DUMMY_PRODUCTS.find(s => {
-      return s.id === productId;
-    });
-  
+    let product;
+
+    try {
+      product = await Products.findById(productId);
+    } catch (error) {
+      return next('Something went wrong', 500);
+    }
+
     if (!product) {
       return next(new HttpError('Could not find a product for the provided id.', 404));
     }
@@ -33,7 +42,7 @@ const getProductsById = (req, res, next) => {
     res.json({ product });
   };
 
-const createProduct = (req, res, next) => {
+const createProduct = async(req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return next(new HttpError('Invalid inputs passed, please check your data.', 422));
@@ -41,52 +50,75 @@ const createProduct = (req, res, next) => {
   
     const { categoryId, name, description, amount, batchCode, image} = req.body;
   
-    const createdProduct = {
-      id: uuid(),
+    const createdProduct = new Products({
       categoryId,
       name,
       description,
       amount,
       batchCode,
       image,
-    };
+    });
   
-    DUMMY_PRODUCTS.push(createdProduct);
+    try {
+      await createdProduct.save();
+    } catch (error) {
+      return next(new HttpError('Creating product failed', 500));
+    }
   
     res.status(201).json({ product: createdProduct });
   };
 
-const updateProduct = (req, res, next) => {
+const updateProduct = async(req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return next(new HttpError('Invalid inputs passed, please check your data.', 422));
     }
-  
+
+    let productId = req.params.pid;
+    let product;
     const { categoryId, name, description, amount, batchCode, image} = req.body;
-    const productId = req.params.pid;
+
+    try {
+      product = await Products.findById(productId);
+    } catch (error) {
+      return next(new HttpError('updating product failed', 500));
+    }
+
+
+    if (!product) {
+      return next(new HttpError('Could not find a product for the provided id.', 404));
+    }
+
+    product.categoryId = categoryId;
+    product.name = name;
+    product.description = description;
+    product.amount = amount;
+    product.batchCode = batchCode;
+    product.image = image;
+
+    try {
+      await product.save();
+    } catch (error) {
+      return next(new HttpError('updating product failed', 500));
+    }
   
-    const updatedProduct = { ...DUMMY_PRODUCTS.find(s => s.id === productId) };
-    const productIndex = DUMMY_PRODUCTS.findIndex(s => s.id === productId);
-    updatedProduct.categoryId = categoryId;
-    updatedProduct.name = name;
-    updatedProduct.description = description;
-    updatedProduct.amount = amount;
-    updatedProduct.batchCode = batchCode;
-    updatedProduct.image = image;
-  
-    DUMMY_PRODUCTS[productIndex] = updatedProduct
-  
-    res.status(200).json({ product: updatedProduct });
+    res.status(200).json({ products: product});
   };
 
 const deleteProduct = (req, res, next) => {
     const productId = req.params.pid;
-    if (!DUMMY_PRODUCTS.find(s => s.id === productId)) {
-      return next(new HttpError('Could not find a shop for that id.', 404));
+
+    Products.findByIdAndDelete(productId, (error, product)=>
+    {
+      if(error){
+        return next(new HttpError('deleting product failed', 500));
+      }
+      else{
+        res.status(200).json({ message: "Deleted product" });
+      }
     }
-    DUMMY_PRODUCTS = DUMMY_PRODUCTS.filter(s => s.id !== productId);
-    res.status(200).json({ message: 'Deleted product.' });
-  };
+  );
+};
 
   exports.getProducts = getProducts;
   exports.getProductsById = getProductsById;

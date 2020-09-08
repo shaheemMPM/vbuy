@@ -25,7 +25,7 @@ router.post(
 router.patch(
   '/:pid',
   [
-    check('category').not().isEmpty(),
+    check('categoryId').not().isEmpty(),
     check('name').not().isEmpty(),
     check('description').not().isEmpty(),
     check('amount').not().isEmpty(),
