@@ -2,34 +2,34 @@ const uuid = require('uuid/v4');
 const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
-const Shop = require('../models/shops');
+const Shops = require('../models/shops');
 
-let DUMMY_SHOPS = [
-  {
-    id: 's1',
-    name: 'shop1',
-    image: 'link to image',
-    branch: 'branch name',
-    categories: []
+const getShops = async (req, res, next) => {
+  let shops;
+  try {
+    shops = await Shops.find();
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not find shops.', 500));
   }
-];
-
-const getShops = (req, res, next) => {
-  res.status(200).json({shops: DUMMY_SHOPS});
+  res.status(200).json({shops});
 }
 
-const getShopById = (req, res, next) => {
+const getShopById = async (req, res, next) => {
   const shopId = req.params.sid;
 
-  const shop = DUMMY_SHOPS.find(s => {
-    return s.id === shopId;
-  });
+  let shop;
+
+  try {
+    shop = await Shops.findById(shopId);
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not find a shop with given id.', 500));
+  }
 
   if (!shop) {
     return next(new HttpError('Could not find a shop for the provided id.', 404));
   }
 
-  res.json({ shop }); // => { shop } => { shop: shop }
+  res.json({ shop });
 };
 
 const createShop = async (req, res, next) => {
@@ -40,7 +40,7 @@ const createShop = async (req, res, next) => {
 
   const { name, image, branch } = req.body;
 
-  const createdShop = new Shop({
+  const createdShop = new Shops({
     name,
     image,
     branch
@@ -55,7 +55,7 @@ const createShop = async (req, res, next) => {
   res.status(201).json({ shop: createdShop });
 };
 
-const updateShop = (req, res, next) => {
+const updateShop = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
@@ -64,23 +64,45 @@ const updateShop = (req, res, next) => {
   const { name, image, branch } = req.body;
   const shopId = req.params.sid;
 
-  const updatedShop = { ...DUMMY_SHOPS.find(s => s.id === shopId) };
-  const shopIndex = DUMMY_SHOPS.findIndex(s => s.id === shopId);
-  updatedShop.name = name;
-  updatedShop.image = image;
-  updatedShop.branch = branch;
+  let shop;
 
-  DUMMY_SHOPS[shopIndex] = updatedShop;
+  try {
+    shop = await Shops.findById(shopId);
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not find the shop with id', 500));
+  }
 
-  res.status(200).json({ shop: updatedShop });
+  if (!shop) {
+    return next(new HttpError('Could not find a shop for the provided id.', 404));
+  }
+
+  shop.name = name;
+  shop.image = image;
+  shop.branch = branch;
+
+  try {
+    await shop.save();
+  } catch (err) {
+    return next(new HttpError('Something went wrong, could not update shop.', 500));
+  }
+
+  res.status(200).json({ shop });
 };
 
-const deleteShop = (req, res, next) => {
+const deleteShop = async (req, res, next) => {
   const shopId = req.params.sid;
-  if (!DUMMY_SHOPS.find(s => s.id === shopId)) {
-    return next(new HttpError('Could not find a shop for that id.', 404));
+  let shop;
+  try {
+    shop = await Shops.findById(shopId);
+  } catch (error) {
+    return next(new HttpError('Could not find a shop for the provided id.', 500));
   }
-  DUMMY_SHOPS = DUMMY_SHOPS.filter(s => s.id !== shopId);
+
+  try {
+    await shop.remove();
+  } catch (error) {
+    return next(new HttpError('Could not delete a shop for the provided id.', 500));
+  }
   res.status(200).json({ message: 'Deleted shop.' });
 };
 
