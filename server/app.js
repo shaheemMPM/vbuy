@@ -36,5 +36,5 @@ mongoose
     });
   })
   .catch(err => {
-    console.erro(err);
+    console.error(err);
   });

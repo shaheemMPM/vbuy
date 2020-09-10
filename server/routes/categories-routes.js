@@ -23,8 +23,7 @@ router.patch(
   '/:cid',
   [
     check('name').not().isEmpty(),
-    check('image').not().isEmpty(),
-    check('shopId').isEmpty()
+    check('image').not().isEmpty()
   ],
   categoriesController.updateCategory
 );
