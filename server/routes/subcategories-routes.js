@@ -13,8 +13,8 @@ router.post(
   '/',
 	[
 		check('name').not().isEmpty(),
-        check('image').not().isEmpty(),
-        check('categoryId').not().isEmpty()
+    check('image').not().isEmpty(),
+    check('categoryId').not().isEmpty()
   ],
   subcategoriesController.createSubCategory
 );
@@ -23,8 +23,7 @@ router.patch(
   '/:scid',
   [
     check('name').not().isEmpty(),
-    check('image').not().isEmpty(),
-    check('categoryId').not().isEmpty()
+    check('image').not().isEmpty()
   ],
   subcategoriesController.updateSubCategory
 );

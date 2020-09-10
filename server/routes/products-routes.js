@@ -17,7 +17,6 @@ router.post(
     check('amount').not().isEmpty(),
     check('batchCode').not().isEmpty(),
     check('subcategoryId').not().isEmpty()
-    //check('image').not().isEmpty()
   ],
   productsController.createProduct
 );
@@ -28,9 +27,7 @@ router.patch(
     check('name').not().isEmpty(),
     check('description').not().isEmpty(),
     check('amount').not().isEmpty(),
-    check('batchCode').not().isEmpty(),
-    check('subcategoryId').not().isEmpty()
-    //check('image').not().isEmpty()
+    check('batchCode').not().isEmpty()
   ],
   productsController.updateProduct
 );

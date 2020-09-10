@@ -98,6 +98,10 @@ const deleteShop = async (req, res, next) => {
     return next(new HttpError('Could not find a shop for the provided id.', 500));
   }
 
+  if (!shop) {
+    return next(new HttpError('Could not find a shop for the provided id.', 404));
+  }
+
   try {
     await shop.remove();
   } catch (error) {

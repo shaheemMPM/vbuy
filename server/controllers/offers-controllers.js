@@ -96,7 +96,7 @@ const deleteOffer = async (req, res, next) => {
 		return next(new HttpError('Could not find an offer for the provided id.', 404));
 	}
 
-  try {
+  	try {
 		await offer.remove();
 	} catch (error) {
 		return next(new HttpError('Could not delete an offer for the provided id.', 500));

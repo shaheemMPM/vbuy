@@ -106,11 +106,11 @@ const deleteCategory = async (req, res, next) => {
 	try {
 		category = await Categories.findById(categoryId);
 	} catch (error) {
-		return next(new HttpError('Could not find a category for the provided id.1', 500));
+		return next(new HttpError('Could not find a category for the provided id.', 500));
 	}
 
 	if (!category) {
-		return next(new HttpError('Could not find a category for the provided id.2', 404));
+		return next(new HttpError('Could not find a category for the provided id.', 404));
 	}
 
 	let shopId = category.shopId;
@@ -132,7 +132,7 @@ const deleteCategory = async (req, res, next) => {
 		await shop.save();
 		await category.remove();
 	} catch (error) {
-		return next(new HttpError('Could not delete a category for the provided id.3', 500));
+		return next(new HttpError('Could not delete a category for the provided id.', 500));
 	}
 	
   	res.status(200).json({ message: 'Deleted category.' });

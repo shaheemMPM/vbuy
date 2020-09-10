@@ -71,7 +71,7 @@ const login = async (req, res, next) => {
 	let existingAdmin;
   
 	try {
-	  	existingAdmin = await User.findOne({ email: email });
+	  	existingAdmin = await Admin.findOne({ email: email });
 	} catch (err) {
 		const error = new HttpError('Logging in failed, please try again later.', 500);
 		return next(error);
@@ -98,8 +98,8 @@ const login = async (req, res, next) => {
 	let token;
 	try {
 		token = jwt.sign({
-			adminId: createdAdmin.id,
-			email: createdAdmin.email
+			adminId: existingAdmin.id,
+			email: existingAdmin.email
 		}, 'nexero_super_boys_supersecret_key', { expiresIn: '1h' });
 	} catch (err) {
 		const error = new HttpError('Logging in failed, please try again later.', 500);

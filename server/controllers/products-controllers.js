@@ -1,20 +1,8 @@
-const uuid = require('uuid/v4');
 const { validationResult } = require('express-validator');
+
 const Products = require('../models/products');
 const SubCategory = require('../models/subcategories');
-
 const HttpError = require('../models/http-error');
-
-let DUMMY_PRODUCTS = [
-  {
-    categoryId: '001',
-    name: 'prod1',
-    description: 'desc',
-    amount: 0,
-    batchCode: 'p001',
-    image: ["s.jpeg", "k.png"]
-  }
-];
 
 const getProducts = async (req,res,next) =>{
   let products;
@@ -23,25 +11,25 @@ const getProducts = async (req,res,next) =>{
   } catch (error) {
     return next('Something went wrong', 500);
   }
-    res.status(200).json({products});
+  res.status(200).json({products});
 }
 
 const getProductsById = async(req, res, next) => {
-    const productId = req.params.pid;
-    let product;
+  const productId = req.params.pid;
+  let product;
 
-    try {
-      product = await Products.findById(productId);
-    } catch (error) {
-      return next('Something went wrong', 500);
-    }
+  try {
+    product = await Products.findById(productId);
+  } catch (error) {
+    return next('Something went wrong, could not able to find product for given id.', 500);
+  }
 
-    if (!product) {
-      return next(new HttpError('Could not find a product for the provided id.', 404));
-    }
+  if (!product) {
+    return next(new HttpError('Could not find a product for the provided id.', 404));
+  }
   
-    res.json({ product });
-  };
+  res.json({ product });
+};
 
 const createProduct = async(req, res, next) => {
   const errors = validationResult(req);
@@ -54,13 +42,13 @@ const createProduct = async(req, res, next) => {
   let subcategory;
 
 	try {
-			subcategory = await SubCategory.findById(subcategoryId);
+    subcategory = await SubCategory.findById(subcategoryId);
 	} catch (error) {
-			return next(new HttpError('Something went wrong, could not find a category with given id.', 500));
+    return next(new HttpError('Something went wrong, could not find a category with given id.', 500));
 	}
 
 	if(!subcategory){
-			return next(new HttpError('Could not find a subcategory for the provided id.', 404));
+    return next(new HttpError('Could not find a subcategory for the provided id.', 404));
 	}
   
   const createdProduct = new Products({
@@ -71,7 +59,7 @@ const createProduct = async(req, res, next) => {
     image,
     subcategoryId,
   });
-  console.log(subcategory);
+  
   subcategory.products.push(createdProduct.id);
 
   try {
@@ -100,7 +88,6 @@ const updateProduct = async(req, res, next) => {
     return next(new HttpError('updating product failed', 500));
   }
 
-
   if (!product) {
     return next(new HttpError('Could not find a product for the provided id.', 404));
   }
@@ -123,33 +110,22 @@ const updateProduct = async(req, res, next) => {
 const deleteProduct = async(req, res, next) => {
   const productId = req.params.pid;
   let product;
-  let subcategory;
+  try {
+    product = await Products.findById(productId);
+  } catch (error) {
+    return next(new HttpError('Could not find a product for the provided id.', 500));
+  }
+
+  if (!product) {
+    return next(new HttpError('Could not find a shop for the provided id.', 404));
+  }
 
   try {
-		product = await SubCategory.findById(productId);
-	} catch (error) {
-		return next(new HttpError('Reading product failed', 500));
-	}
-  const subcategoryId = Products.subcategoryId;
-
-  try{
-    subcategory = await SubCategory.findById(subcategoryId);
-  }catch(error){
-    return next(new HttpError('Reading categories failed', 500));
+    await product.remove();
+  } catch (error) {
+    return next(new HttpError('Could not delete a product for the provided id.', 500));
   }
-
-  Products.findByIdAndDelete(productId, (error, product)=>
-  {
-    if(error){
-      return next(new HttpError('deleting product failed', 500));
-    }
-    else{
-      res.status(200).json({ message: "Deleted product" });
-    }
-  }
-  );
-
-  subcategory.products.remove(productId);
+  res.status(200).json({ message: 'Deleted product.' });
 };
 
 exports.getProducts = getProducts;
