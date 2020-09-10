@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const shopsRoutes = require('./routes/shops-routes');
 const categoriesRoutes = require('./routes/categories-routes');
+const subcategoriesRoutes = require('./routes/subcategories-routes.js');
 const productsRoutes = require('./routes/products-routes');
 const offersRoutes = require('./routes/offers-routes');
 const HttpError = require('./models/http-error');
@@ -14,6 +15,7 @@ app.use(bodyParser.json());
 
 app.use('/api/v1/shops', shopsRoutes);
 app.use('/api/v1/categories', categoriesRoutes);
+app.use('/api/v1/subcategories', subcategoriesRoutes);
 app.use('/api/v1/products', productsRoutes);
 app.use('/api/v1/offers', offersRoutes);
 

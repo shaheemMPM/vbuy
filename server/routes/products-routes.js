@@ -12,11 +12,11 @@ router.get('/:pid', productsController.getProductsById);
 router.post(
   '/',
   [
-    check('categoryId').not().isEmpty(),
     check('name').not().isEmpty(),
     check('description').not().isEmpty(),
     check('amount').not().isEmpty(),
     check('batchCode').not().isEmpty(),
+    check('subcategoryId').not().isEmpty()
     //check('image').not().isEmpty()
   ],
   productsController.createProduct
@@ -25,11 +25,11 @@ router.post(
 router.patch(
   '/:pid',
   [
-    check('categoryId').not().isEmpty(),
     check('name').not().isEmpty(),
     check('description').not().isEmpty(),
     check('amount').not().isEmpty(),
     check('batchCode').not().isEmpty(),
+    check('subcategoryId').not().isEmpty()
     //check('image').not().isEmpty()
   ],
   productsController.updateProduct
