@@ -2,7 +2,8 @@ const uuid = require('uuid/v4');
 const { validationResult } = require('express-validator');
 
 const HttpError = require('../models/http-error');
-const Category = require('../models/categories');
+const Categories = require('../models/categories');
+const Shops = require('../models/shops');
 
 let DUMMY_CATEGORIES = [
   {
@@ -16,7 +17,7 @@ let DUMMY_CATEGORIES = [
 const getCategories = async (req, res, next) => {
 	let categories;
 	try {
-		categories = await Category.find();
+		categories = await Categories.find();
 	} catch (error) {
 		return next(new HttpError('Reading categories failed', 500));
 	}
@@ -29,7 +30,7 @@ const getCategoryById = async (req, res, next) => {
 	let category;
 	
 	try {
-		category = await Category.findById(categoryId);
+		category = await Categories.findById(categoryId);
 	} catch(error) {
 		return next(new HttpError('Reading categories failed', 500));
 	}
@@ -49,14 +50,29 @@ const createCategory = async (req, res, next) => {
 
 	const { name, image, shopId } = req.body;
 
-	const createdCategory = new Category({
+	let shop;
+
+	try {
+		shop = await Shops.findById(shopId);
+	} catch (error) {
+		return next(new HttpError('Something went wrong, could not find a shop with given id.', 500));
+	}
+
+	if (!shop) {
+    return next(new HttpError('Could not find a shop for the provided id.', 404));
+	}
+	
+	const createdCategory = new Categories({
 	  name,
 	  image,
 	  shopId
 	});
 
+	shop.categories.push(createdCategory.id);
+
 	try {
 		await createdCategory.save();
+		await shop.save();
 	} catch (error) {
 		return next(new HttpError('Creating category failed', 500));
 	}
@@ -76,14 +92,13 @@ const updateCategory = async (req, res, next) => {
 	let updatedCategory;
 
 	try {
-		updatedCategory = await Category.findById(categoryId);
+		updatedCategory = await Categories.findById(categoryId);
 	} catch (error) {
 		return next(new HttpError('Reading categories failed', 500));
 	}
 
 	updatedCategory.name = name;
 	updatedCategory.image = image;
-	updatedCategory.shopId = shopId;
 	
 	try {
 		await updatedCategory.save();
@@ -94,17 +109,42 @@ const updateCategory = async (req, res, next) => {
 	res.status(200).json({ updatedCategory });
 }
 
-const deleteCategory = (req, res, next) => {
+const deleteCategory = async (req, res, next) => {
 	const categoryId = req.params.cid;
+	let category;
 
-	Category.findByIdAndDelete(categoryId, (error, category) => {
-		if (error) {
-			return next(new HttpError('Deleting categories failed', 500));
-		} else {
-			console.log(category);
-			res.status(200).json({ message: 'Deleted category.' });
-		}
-	});
+	try {
+		category = await Categories.findById(categoryId);
+	} catch (error) {
+		return next(new HttpError('Could not find a category for the provided id.1', 500));
+	}
+
+	if (!category) {
+		return next(new HttpError('Could not find a category for the provided id.2', 404));
+	}
+
+	let shopId = category.shopId;
+	let shop;
+
+	try {
+		shop = await Shops.findById(shopId);
+	} catch(error) {
+		return next(new HttpError('Could not find a shop for the provided id.', 500));
+	}
+	if (!shop) {
+    return next(new HttpError('Could not find a shop for the provided id.', 404));
+	}
+
+	shop.categories.remove(categoryId);
+
+  try {
+		await shop.save();
+		await category.remove();
+  } catch (error) {
+    return next(new HttpError('Could not delete a category for the provided id.3', 500));
+	}
+	
+  res.status(200).json({ message: 'Deleted category.' });
 }
 
 exports.getCategories = getCategories;
