@@ -7,6 +7,7 @@ const categoriesRoutes = require('./routes/categories-routes');
 const subcategoriesRoutes = require('./routes/subcategories-routes.js');
 const productsRoutes = require('./routes/products-routes');
 const offersRoutes = require('./routes/offers-routes');
+const adminRoutes = require('./routes/admin-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
@@ -18,6 +19,7 @@ app.use('/api/v1/categories', categoriesRoutes);
 app.use('/api/v1/subcategories', subcategoriesRoutes);
 app.use('/api/v1/products', productsRoutes);
 app.use('/api/v1/offers', offersRoutes);
+app.use('/api/v1/admin', adminRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);
@@ -33,7 +35,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect('mongodb+srv://nexero:subin123@cluster0.pd1yc.mongodb.net/vbuy?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true})
+  .connect('mongodb+srv://nexero:subin123@cluster0.pd1yc.mongodb.net/vbuy?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true})
   .then(() => {
     app.listen(5000, () => {
       console.log('Running on port 5000');
