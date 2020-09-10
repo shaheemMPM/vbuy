@@ -12,7 +12,7 @@ const getCategories = async (req, res, next) => {
 		return next(new HttpError('Reading categories failed', 500));
 	}
 
-	res.status(200).json(categories);
+	res.status(200).json({categories});
 }
 
 const getCategoryById = async (req, res, next) => {
@@ -29,7 +29,7 @@ const getCategoryById = async (req, res, next) => {
 		return next(new HttpError('Could not find a category for the provided id.', 404));
 	}
 
-	res.json({ category });
+	res.status(200).json({ category });
 }
 
 const createCategory = async (req, res, next) => {

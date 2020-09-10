@@ -2,8 +2,11 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const subcategoriesController = require('../controllers/subcategories-controllers');
+const checkAuth = require('../middlewares/check-isadmin');
 
 const router = express.Router();
+
+router.use(checkAuth);
 
 router.get('/', subcategoriesController.getSubCategories);
 

@@ -9,6 +9,7 @@ const productSchema = new Schema({
     amount: { type: Number, required: true},
     batchCode: { type: String, required: true },
     image: [String],
+    popular: { type: Boolean, default: false },
     subcategoryId: {type: objectId, required:true}
 });
 

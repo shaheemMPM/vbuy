@@ -2,8 +2,11 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const categoriesController = require('../controllers/categories-controllers');
+const checkAuth = require('../middlewares/check-isadmin');
 
 const router = express.Router();
+
+router.use(checkAuth);
 
 router.get('/', categoriesController.getCategories);
 
