@@ -11,7 +11,7 @@ const getOffers = async (req, res, next) => {
 		return next(new HttpError('Reading offers failed', 500));
 	}
 
-	res.status(200).json(offers);
+	res.status(200).json({offers});
 }
 
 const getOfferById = async (req, res, next) => {
@@ -28,7 +28,7 @@ const getOfferById = async (req, res, next) => {
 		return next(new HttpError('Could not find an offer for the provided id.', 404));
 	}
 
-	res.json({ offer });
+	res.status(200).json({ offer });
 }
 
 const createOffer = async (req, res, next) => {

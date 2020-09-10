@@ -12,7 +12,7 @@ const getSubCategories = async (req, res, next) => {
 		return next(new HttpError('Reading categories failed', 500));
 	}
 
-	res.status(200).json(subcategories);
+	res.status(200).json({subcategories});
 }
 
 const getSubCategoryById = async (req, res, next) => {
@@ -29,7 +29,7 @@ const getSubCategoryById = async (req, res, next) => {
 		return next(new HttpError('Could not find a subcategory for the provided id.', 404));
 	}
 
-	res.json({ subcategory });
+	res.status(200).json({ subcategory });
 }
 
 const createSubCategory = async (req, res, next) => {
