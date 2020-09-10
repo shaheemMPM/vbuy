@@ -6,8 +6,7 @@ const ObjectId = Schema.ObjectId;
 const categoriesSchema = new Schema({
   name: { type: String, required: true },
   image: { type: String, required: true },
-  shopId: { type: ObjectId, required: true },
-  subcategories: { type: [ObjectId], default: [] },
+  shopId: { type: ObjectId, required: true }
 });
 
 module.exports = mongoose.model('Categories', categoriesSchema);

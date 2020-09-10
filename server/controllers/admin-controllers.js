@@ -8,7 +8,7 @@ const Admin = require('../models/admin');
 const signup = async (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-	  	return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
   
 	const { name, email, password } = req.body;
@@ -35,13 +35,13 @@ const signup = async (req, res, next) => {
 	}
   
 	const createdAdmin = new Admin({
-	  	name,
+		name,
 		email,
 		password: hashedPassword
 	});
   
 	try {
-	  	await createdAdmin.save();
+		await createdAdmin.save();
 	} catch (err) {
 		const error = new HttpError('Signing up failed, please try again later.', 500);
 		return next(error);

@@ -29,14 +29,14 @@ const getSubCategoryById = async (req, res, next) => {
 		return next(new HttpError('Could not find a subcategory for the provided id.', 404));
 	}
 
-  	res.json({ subcategory });
+	res.json({ subcategory });
 }
 
 const createSubCategory = async (req, res, next) => {
-  	const errors = validationResult(req);
-  	if (!errors.isEmpty()) {
-    	return next(new HttpError('Invalid inputs passed, please check your data.', 422));
-  	}
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+	}
 
 	const { name, image, categoryId} = req.body;
 
@@ -57,11 +57,8 @@ const createSubCategory = async (req, res, next) => {
 		categoryId
 	});
 
-	category.subcategories.push(createdSubCategory.id);
-
 	try {
 		await createdSubCategory.save();
-		await category.save();
 	} catch (error) {
 		return next(new HttpError('Creating subcategory failed', 500));
 	}
@@ -87,8 +84,8 @@ const updateSubCategory = async (req, res, next) => {
 	}
 
 	if(!updatedSubCategory){
-        return next(new HttpError('Could not find a sub category for the provided id.', 404));
-    }
+		return next(new HttpError('Could not find a sub category for the provided id.', 404));
+	}
 
 	updatedSubCategory.name = name;
 	updatedSubCategory.image = image;
@@ -115,24 +112,8 @@ const deleteSubCategory = async (req, res, next) => {
 	if (!subcategory) {
 		return next(new HttpError('Could not find a sub category for the provided id', 404));
 	}
-	
-	const categoryId = subcategory.categoryId;
-	let category;
-	
-	try {
-		category = await Category.findById(categoryId);
-	} catch(error) {
-		return next(new HttpError('Reading categories failed', 500));
-	}
-
-	if (!category) {
-    	return next(new HttpError('Could not find a category for the provided id.', 404));
-	}
-
-	category.subcategories.remove(subcategoryId);
 
 	try {
-		await category.save();
 		await subcategory.remove();
 	} catch (error) {
 		return next(new HttpError('Could not delete a sub category for the provided id.', 500));

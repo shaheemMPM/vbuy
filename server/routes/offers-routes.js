@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/', offersController.getOffers);
 
- router.get('/:oid', offersController.getOfferById);
+router.get('/:oid', offersController.getOfferById);
 
 router.post(
   '/',

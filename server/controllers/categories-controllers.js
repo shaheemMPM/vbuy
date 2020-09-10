@@ -29,11 +29,11 @@ const getCategoryById = async (req, res, next) => {
 		return next(new HttpError('Could not find a category for the provided id.', 404));
 	}
 
-  	res.json({ category });
+	res.json({ category });
 }
 
 const createCategory = async (req, res, next) => {
-  	const errors = validationResult(req);
+	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
@@ -49,7 +49,7 @@ const createCategory = async (req, res, next) => {
 	}
 
 	if (!shop) {
-    	return next(new HttpError('Could not find a shop for the provided id.', 404));
+		return next(new HttpError('Could not find a shop for the provided id.', 404));
 	}
 	
 	const createdCategory = new Categories({
@@ -58,11 +58,8 @@ const createCategory = async (req, res, next) => {
 		shopId
 	});
 
-	shop.categories.push(createdCategory.id);
-
 	try {
 		await createdCategory.save();
-		await shop.save();
 	} catch (error) {
 		return next(new HttpError('Creating category failed', 500));
 	}
@@ -113,29 +110,13 @@ const deleteCategory = async (req, res, next) => {
 		return next(new HttpError('Could not find a category for the provided id.', 404));
 	}
 
-	let shopId = category.shopId;
-	let shop;
-
 	try {
-		shop = await Shops.findById(shopId);
-	} catch(error) {
-		return next(new HttpError('Could not find a shop for the provided id.', 500));
-	}
-
-	if (!shop) {
-    	return next(new HttpError('Could not find a shop for the provided id.', 404));
-	}
-
-	shop.categories.remove(categoryId);
-
-  	try {
-		await shop.save();
 		await category.remove();
 	} catch (error) {
 		return next(new HttpError('Could not delete a category for the provided id.', 500));
 	}
-	
-  	res.status(200).json({ message: 'Deleted category.' });
+
+	res.status(200).json({ message: 'Deleted category.' });
 }
 
 exports.getCategories = getCategories;

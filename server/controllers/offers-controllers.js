@@ -28,11 +28,11 @@ const getOfferById = async (req, res, next) => {
 		return next(new HttpError('Could not find an offer for the provided id.', 404));
 	}
 
-  	res.json({ offer });
+	res.json({ offer });
 }
 
 const createOffer = async (req, res, next) => {
-  	const errors = validationResult(req);
+	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
@@ -102,7 +102,7 @@ const deleteOffer = async (req, res, next) => {
 		return next(new HttpError('Could not delete an offer for the provided id.', 500));
 	}
 	
-  	res.status(200).json({ message: 'Deleted offer.' });
+	res.status(200).json({ message: 'Deleted offer.' });
 }
 
 exports.getOffers = getOffers;

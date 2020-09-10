@@ -4,7 +4,7 @@ const Products = require('../models/products');
 const SubCategory = require('../models/subcategories');
 const HttpError = require('../models/http-error');
 
-const getProducts = async (req,res,next) =>{
+const getProducts = async (req, res, next) =>{
   let products;
   try {
     products = await Products.find();
@@ -59,12 +59,9 @@ const createProduct = async(req, res, next) => {
     image,
     subcategoryId,
   });
-  
-  subcategory.products.push(createdProduct.id);
 
   try {
     await createdProduct.save();
-    await subcategory.save();
   } catch (error) {
     return next(new HttpError('Creating product failed', 500));
   }
