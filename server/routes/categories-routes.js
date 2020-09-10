@@ -24,7 +24,7 @@ router.patch(
   [
     check('name').not().isEmpty(),
     check('image').not().isEmpty(),
-    check('shopId').not().isEmpty()
+    check('shopId').isEmpty()
   ],
   categoriesController.updateCategory
 );
