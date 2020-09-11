@@ -32,4 +32,8 @@ router.patch(
 
 router.delete('/:oid', offersController.deleteOffer);
 
+router.post('/add/:oid/:pid', offersController.addProduct);
+
+router.delete('/remove/:oid/:pid', offersController.removeProduct);
+
 module.exports = router;
