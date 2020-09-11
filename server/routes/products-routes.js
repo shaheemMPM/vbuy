@@ -12,6 +12,8 @@ router.get('/', productsController.getProducts);
 
 router.get('/:pid', productsController.getProductsById);
 
+router.get('/subcategory/:scid', productsController.getProductsBySubcategoryId);
+
 router.post(
   '/',
   [

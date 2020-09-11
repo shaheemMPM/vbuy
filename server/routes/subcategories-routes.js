@@ -12,6 +12,8 @@ router.get('/', subcategoriesController.getSubCategories);
 
 router.get('/:scid', subcategoriesController.getSubCategoryById);
 
+router.get('/category/:cid', subcategoriesController.getSubcategoryByCategoryId);
+
 router.post(
   '/',
 	[

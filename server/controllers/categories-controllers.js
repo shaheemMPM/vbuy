@@ -32,6 +32,23 @@ const getCategoryById = async (req, res, next) => {
 	res.status(200).json({ category });
 }
 
+const getCategoriesByShopId = async (req, res, next) =>{
+	const shopId = req.params.sid;
+	let categories;
+
+	try {
+		categories = await Categories.find({shopId: shopId});
+	} catch (error) {
+		return next(new HttpError('Reading categories with given shop id failed.', 500));
+	}
+
+	if(!categories){
+		return next(new HttpError('Could not find a categories for the provided shop id.', 404));
+	}
+
+	res.status(200).json({ categories });
+}
+
 const createCategory = async (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -124,3 +141,4 @@ exports.getCategoryById = getCategoryById;
 exports.createCategory = createCategory;
 exports.updateCategory = updateCategory;
 exports.deleteCategory = deleteCategory;
+exports.getCategoriesByShopId = getCategoriesByShopId;

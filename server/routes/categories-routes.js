@@ -11,6 +11,7 @@ router.use(checkAuth);
 router.get('/', categoriesController.getCategories);
 
 router.get('/:cid', categoriesController.getCategoryById);
+router.get('/shop/:sid', categoriesController.getCategoriesByShopId);
 
 router.post(
   '/',
