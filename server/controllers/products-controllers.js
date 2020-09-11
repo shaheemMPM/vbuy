@@ -31,6 +31,23 @@ const getProductsById = async(req, res, next) => {
   res.json({ product });
 };
 
+const getProductsBySubcategoryId = async (req, res, next) =>{
+	const subcategoryId = req.params.scid;
+	let products;
+
+	try {
+		products = await Products.find({subcategoryId: subcategoryId});
+	} catch (error) {
+		return next(new HttpError('Reading products with given subcategory id failed.', 500));
+	}
+
+	if(!products){
+		return next(new HttpError('Could not find products for the provided subcategory id.', 404));
+	}
+
+	res.status(200).json({ products });
+}
+
 const createProduct = async(req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -130,3 +147,4 @@ exports.getProductsById = getProductsById;
 exports.createProduct = createProduct;
 exports.updateProduct = updateProduct;
 exports.deleteProduct = deleteProduct;
+exports.getProductsBySubcategoryId = getProductsBySubcategoryId;
