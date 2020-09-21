@@ -1,8 +1,8 @@
 const express = require('express');
 const { check } = require('express-validator');
 
-const offersController = require('../controllers/offers-controllers');
-const checkAuth = require('../middlewares/check-isadmin');
+const offersController = require('../../controllers/dashboard/offers-controllers');
+const checkAuth = require('../../middlewares/check-isadmin');
 
 const router = express.Router();
 

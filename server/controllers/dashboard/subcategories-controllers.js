@@ -1,8 +1,8 @@
 const { validationResult } = require('express-validator');
 
-const HttpError = require('../models/http-error');
-const SubCategory = require('../models/subcategories');
-const Category = require('../models/categories');
+const HttpError = require('../../models/http-error');
+const SubCategory = require('../../models/subcategories');
+const Category = require('../../models/categories');
 
 const getSubCategories = async (req, res, next) => {
 	let subcategories;

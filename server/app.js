@@ -2,24 +2,25 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const shopsRoutes = require('./routes/shops-routes');
-const categoriesRoutes = require('./routes/categories-routes');
-const subcategoriesRoutes = require('./routes/subcategories-routes.js');
-const productsRoutes = require('./routes/products-routes');
-const offersRoutes = require('./routes/offers-routes');
-const adminRoutes = require('./routes/admin-routes');
+const shopsRoutes = require('./routes/dashboard/shops-routes');
+const categoriesRoutes = require('./routes/dashboard/categories-routes');
+const subcategoriesRoutes = require('./routes/dashboard/subcategories-routes.js');
+const productsRoutes = require('./routes/dashboard/products-routes');
+const offersRoutes = require('./routes/dashboard/offers-routes');
+const adminRoutes = require('./routes/dashboard/admin-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
 
 app.use(bodyParser.json());
 
-app.use('/api/v1/shops', shopsRoutes);
-app.use('/api/v1/categories', categoriesRoutes);
-app.use('/api/v1/subcategories', subcategoriesRoutes);
-app.use('/api/v1/products', productsRoutes);
-app.use('/api/v1/offers', offersRoutes);
-app.use('/api/v1/admin', adminRoutes);
+app.use('/api/dashboard/v1/shops', shopsRoutes);
+app.use('/api/dashboard/v1/categories', categoriesRoutes);
+app.use('/api/dashboard/v1/subcategories', subcategoriesRoutes);
+app.use('/api/dashboard/v1/products', productsRoutes);
+app.use('/api/dashboard/v1/offers', offersRoutes);
+app.use('/api/dashboard/v1/admin', adminRoutes);
+app.use('/api/mobile/v1/admin', adminRoutes);
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);
