@@ -2,8 +2,8 @@ const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const HttpError = require('../models/http-error');
-const Admin = require('../models/admin');
+const HttpError = require('../../models/http-error');
+const User = require('../../models/user');
 
 const signup = async (req, res, next) => {
 	const errors = validationResult(req);
@@ -11,18 +11,18 @@ const signup = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
   
-	const { name, email, password } = req.body;
+	const { name, email, mobile, password } = req.body;
   
-	let existingAdmin;
+	let existingUser;
 	try {
-		existingAdmin = await Admin.findOne({ email: email });
+		existingUser = await User.findOne({ email: email });
 	} catch (err) {
 		const error = new HttpError('Signing up failed, please try again later.', 500);
 		return next(error);
 	}
   
-	if (existingAdmin) {
-		const error = new HttpError('Admin exists already, please login instead.', 422);
+	if (existingUser) {
+		const error = new HttpError('User exists already, please login instead.', 422);
 		return next(error);
 	}
   
@@ -30,18 +30,19 @@ const signup = async (req, res, next) => {
 	try {
 	  	hashedPassword = await bcrypt.hash(password, 12);
 	} catch (err) {
-		const error = new HttpError('Could not create admin, please try again.', 500);
+		const error = new HttpError('Could not create user, please try again.', 500);
 		return next(error);
 	}
   
-	const createdAdmin = new Admin({
+	const createdUser = new User({
 		name,
 		email,
+		mobile,
 		password: hashedPassword
 	});
   
 	try {
-		await createdAdmin.save();
+		await createdUser.save();
 	} catch (err) {
 		const error = new HttpError('Signing up failed, please try again later.', 500);
 		return next(error);
@@ -50,17 +51,17 @@ const signup = async (req, res, next) => {
 	let token;
 	try {
 		token = jwt.sign({
-			adminId: createdAdmin.id,
-			email: createdAdmin.email
-		}, 'nexero_super_boys_supersecret_key', { expiresIn: '1h' });
+			userId: createdUser.id,
+			email: createdUser.email
+		}, 'nexero_super_boys_supersecret_key');
 	} catch (err) {
 		const error = new HttpError('Signing up failed, please try again later.', 500);
 		return next(error);
 	}
   
 	res.status(201).json({ 
-		adminId: createdAdmin.id, 
-		email: createdAdmin.email, 
+		userId: createdUser.id, 
+		email: createdUser.email, 
 		token: token 
 	});
 }
@@ -68,23 +69,23 @@ const signup = async (req, res, next) => {
 const login = async (req, res, next) => {
 	const { email, password } = req.body;
   
-	let existingAdmin;
+	let existingUser;
   
 	try {
-	  	existingAdmin = await Admin.findOne({ email: email });
+	  	existingUser = await User.findOne({ email: email });
 	} catch (err) {
 		const error = new HttpError('Logging in failed, please try again later.', 500);
 		return next(error);
 	}
   
-	if (!existingAdmin) {
+	if (!existingUser) {
 		const error = new HttpError('Invalid credentials, could not log you in.', 403);
 		return next(error);
 	}
   
 	let isValidPassword = false;
 	try {
-	  	isValidPassword = await bcrypt.compare(password, existingAdmin.password);
+	  	isValidPassword = await bcrypt.compare(password, existingUser.password);
 	} catch (err) {
 		const error = new HttpError('Could not log you in, please check your credentials and try again.', 500);
 		return next(error);
@@ -98,17 +99,17 @@ const login = async (req, res, next) => {
 	let token;
 	try {
 		token = jwt.sign({
-			adminId: existingAdmin.id,
-			email: existingAdmin.email
-		}, 'nexero_super_boys_supersecret_key', { expiresIn: '1h' });
+			userId: existingUser.id,
+			email: existingUser.email
+		}, 'nexero_super_boys_supersecret_key');
 	} catch (err) {
 		const error = new HttpError('Logging in failed, please try again later.', 500);
 		return next(error);
 	}
   
 	res.status(200).json({
-		adminId: existingAdmin.id,
-		email: existingAdmin.email,
+		userId: existingUser.id,
+		email: existingUser.email,
 		token: token
 	});
 }

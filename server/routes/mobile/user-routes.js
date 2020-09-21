@@ -1,7 +1,7 @@
 const express = require('express');
 const { check } = require('express-validator');
 
-const adminController = require('../../controllers/admin-controllers');
+const userController = require('../../controllers/mobile/user-controllers');
 
 const router = express.Router();
 
@@ -10,11 +10,11 @@ router.post(
   [
     check('name').not().isEmpty(),
     check('email').normalizeEmail().isEmail(),
-    check('password').isLength({ min: 6 })
+    check('password').isLength({ min: 8 })
   ],
-  adminController.signup
+  userController.signup
 );
 
-router.post('/login', adminController.login);
+router.post('/login', userController.login);
 
 module.exports = router;
