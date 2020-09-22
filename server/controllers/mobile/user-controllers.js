@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const HttpError = require('../../models/http-error');
 const User = require('../../models/user');
+const { create } = require('../../models/user');
 
 const signup = async (req, res, next) => {
 	const errors = validationResult(req);
@@ -63,6 +64,7 @@ const signup = async (req, res, next) => {
 		userId: createdUser.id, 
 		email: createdUser.email, 
 		name: createdUser.name,
+		mobile: createdUser.mobile,
 		token: token 
 	});
 }
@@ -112,6 +114,7 @@ const login = async (req, res, next) => {
 		userId: existingUser.id,
 		email: existingUser.email,
 		name: existingUser.name,
+		mobile: existingUser.mobile,
 		token: token
 	});
 }
