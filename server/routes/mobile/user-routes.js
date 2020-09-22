@@ -15,6 +15,13 @@ router.post(
   userController.signup
 );
 
-router.post('/login', userController.login);
+router.post(
+  '/login', 
+  [
+    check('email').normalizeEmail().isEmail(),
+    check('password').isLength({ min: 8 })
+  ],
+  userController.login
+);
 
 module.exports = router;

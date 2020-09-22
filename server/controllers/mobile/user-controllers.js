@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const HttpError = require('../../models/http-error');
 const User = require('../../models/user');
-const { create } = require('../../models/user');
 
 const signup = async (req, res, next) => {
 	const errors = validationResult(req);
@@ -12,7 +11,7 @@ const signup = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
   
-	const { name, email, mobile, password } = req.body;
+	let { name, email, mobile, password } = req.body;
   
 	let existingUser;
 	try {
@@ -34,7 +33,15 @@ const signup = async (req, res, next) => {
 		const error = new HttpError('Could not create user, please try again.', 500);
 		return next(error);
 	}
-  
+
+	if (mobile) {
+		if (mobile.length !== 10) {
+			return next(new HttpError('Mobile number should be 10 digit.', 422));
+		}
+	} else {
+		mobile = '';
+	}
+
 	const createdUser = new User({
 		name,
 		email,
@@ -70,6 +77,11 @@ const signup = async (req, res, next) => {
 }
   
 const login = async (req, res, next) => {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
+	}
+	
 	const { email, password } = req.body;
   
 	let existingUser;
