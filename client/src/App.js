@@ -29,49 +29,37 @@ class App extends Component {
   }
 
   render() { 
-    return ( 
-      <React.Fragment>
-        <RingLoader
-          css={{display: 'block', margin: '25vh auto',borderColor: 'red'}}
-          size={150}
-          color={"#ED225D"}
-          loading={this.state.isLoading} />
-        {
-          !this.state.isLoading ? 
-          <Switch>  
-            {
-              this.state.isLoggedIn ? 
+    let routes;
+    if (this.state.isLoggedIn) {
+      routes = <Switch>  
                 <Route path="/" exact component={Home} />
-              :
-                <Route 
-                    path="/" exact
-                    render={(props) => <Login 
-                                          {...props}  
-                                          logHandler={this.authChange} />} />
-            }
-            {
-              this.state.isLoggedIn ? 
-                <Route path="/shops" exact component={Shops} /> : null
-            }
-            {
-              this.state.isLoggedIn ? 
-                <Route path="/categories" exact component={Categories} /> : null
-            }
-            {
-              this.state.isLoggedIn ? 
-                <Route path="/products" exact component={Products} /> : null
-            }
-            {
-              this.state.isLoggedIn ? 
-                <Route path="/delivery-boys" exact component={DeliveryBoys} /> : null
-            }
-            {
-              this.state.isLoggedIn ? 
-                <Route path="/orders" exact component={Orders} /> : null
-            }
+                <Route path="/shops" exact component={Shops} />
+                <Route path="/categories" exact component={Categories} />
+                <Route path="/products" exact component={Products} />
+                <Route path="/delivery-boys" exact component={DeliveryBoys} />
+                <Route path="/orders" exact component={Orders} />
             <Route path="*" component={NotFound} />
           </Switch>
-          : null
+    } else {
+      routes = <Switch>
+        <Route 
+          path="/" exact
+          render={(props) => <Login 
+                                {...props}  
+                                logHandler={this.authChange} />} />
+        <Route path="*" component={NotFound} />
+      </Switch>
+    }
+    return ( 
+      <React.Fragment>
+        {
+          this.state.isLoading ? 
+            <RingLoader
+            css={{display: 'block', margin: '25vh auto',borderColor: 'red'}}
+            size={150}
+            color={"#ED225D"}
+            loading = {true} />
+            : routes
         }
       </React.Fragment>
     );
