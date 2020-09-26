@@ -13,6 +13,8 @@ const adminRoutes = require('./routes/dashboard/admin-routes');
 
 // Importing mobile routes
 const userRoutes = require('./routes/mobile/user-routes');
+const mobCategoriesRoutes = require('./routes/mobile/categories-routes');
+const mobSubcategoriesRoutes = require('./routes/mobile/subcategories-routes');
 
 // Importing general models
 const HttpError = require('./models/http-error');
@@ -31,6 +33,9 @@ app.use('/api/dashboard/v1/admin', adminRoutes);
 
 // mobile route initializing
 app.use('/api/mobile/v1/user', userRoutes);
+app.use('/api/mobile/v1/categories', mobCategoriesRoutes);
+app.use('/api/mobile/v1/subCategories', mobSubcategoriesRoutes);
+
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);
