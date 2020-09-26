@@ -37,12 +37,13 @@ const createShop = async (req, res, next) => {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
-  const { name, image, branch } = req.body;
+  const { name, image, branch, city } = req.body;
 
   const createdShop = new Shops({
     name,
     image,
-    branch
+    branch,
+    city
   });
 
   try {
@@ -60,7 +61,7 @@ const updateShop = async (req, res, next) => {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
 
-  const { name, image, branch } = req.body;
+  const { name, image, branch, city } = req.body;
   const shopId = req.params.sid;
 
   let shop;
@@ -78,6 +79,7 @@ const updateShop = async (req, res, next) => {
   shop.name = name;
   shop.image = image;
   shop.branch = branch;
+  shop.city = city;
 
   try {
     await shop.save();
