@@ -17,7 +17,8 @@ router.post(
   [
     check('name').not().isEmpty(),
     check('image').not().isEmpty(),
-    check('branch').not().isEmpty()
+    check('branch').not().isEmpty(),
+    check('city').not().isEmpty()
   ],
   shopsControllers.createShop
 );
@@ -27,7 +28,8 @@ router.patch(
   [
     check('name').not().isEmpty(),
     check('image').not().isEmpty(),
-    check('branch').not().isEmpty()
+    check('branch').not().isEmpty(),
+    check('city').not().isEmpty()
   ],
   shopsControllers.updateShop
 );
