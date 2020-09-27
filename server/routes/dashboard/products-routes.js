@@ -21,7 +21,9 @@ router.post(
     check('description').not().isEmpty(),
     check('amount').not().isEmpty(),
     check('batchCode').not().isEmpty(),
-    check('subcategoryId').not().isEmpty()
+    check('subcategoryId').not().isEmpty(),
+    check('sgst').not().isEmpty(),
+    check('cgst').not().isEmpty(),
   ],
   productsController.createProduct
 );
@@ -32,7 +34,9 @@ router.patch(
     check('name').not().isEmpty(),
     check('description').not().isEmpty(),
     check('amount').not().isEmpty(),
-    check('batchCode').not().isEmpty()
+    check('batchCode').not().isEmpty(),
+    check('sgst').not().isEmpty(),
+    check('cgst').not().isEmpty(),
   ],
   productsController.updateProduct
 );

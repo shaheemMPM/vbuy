@@ -54,7 +54,7 @@ const createProduct = async(req, res, next) => {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
   
-  const {  name, description, amount, batchCode, image, subcategoryId} = req.body;
+  const { name, description, amount, batchCode, image, subcategoryId, sgst, cgst } = req.body;
 
   let subcategory;
 
@@ -75,6 +75,8 @@ const createProduct = async(req, res, next) => {
     batchCode,
     image,
     subcategoryId,
+    sgst,
+    cgst,
   });
 
   try {
@@ -94,7 +96,7 @@ const updateProduct = async(req, res, next) => {
 
   let productId = req.params.pid;
   let product;
-  const { name, description, amount, batchCode, image} = req.body;
+  const { name, description, amount, batchCode, image, popular, sgst, cgst, offer, offerId, offerPrice } = req.body;
 
   try {
     product = await Products.findById(productId);
@@ -111,6 +113,12 @@ const updateProduct = async(req, res, next) => {
   product.amount = amount;
   product.batchCode = batchCode;
   product.image = image;
+  product.popular = popular;
+  product.sgst = sgst;
+  product.cgst = cgst;
+  product.offer = offer;
+  product.offerId = offerId;
+  product.offerPrice = offerPrice;
 
   try {
     await product.save();
