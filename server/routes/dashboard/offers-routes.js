@@ -28,7 +28,6 @@ router.patch(
   [
     check('name').not().isEmpty(),
     check('percentage').not().isEmpty(),
-    check('shopId').not().isEmpty(),
     check('image').not().isEmpty()
   ],
   offersController.updateOffer

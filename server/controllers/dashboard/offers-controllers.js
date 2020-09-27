@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../../models/http-error');
 const Offers = require('../../models/offers');
 const Products = require('../../models/products');
+const Shops = require('../../models/shops');
 
 const getOffers = async (req, res, next) => {
 	let offers;
@@ -39,6 +40,15 @@ const createOffer = async (req, res, next) => {
 	}
 
 	const { name, percentage, shopId, image } = req.body;
+
+	//check if shjop exists??
+	let shop;
+
+	try {
+		shop = await Shops.findById(shopId);
+	} catch (error) {
+		return next(new HttpError('no shops were found on given shop id', 500));
+	}
 	
 	const createdOffer = new Offers({
 		name,
@@ -62,7 +72,7 @@ const updateOffer = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
 
-	const { name, percentage, shopId, image } = req.body;
+	const { name, percentage, image } = req.body;
 	const offerId = req.params.oid;
 
 	let updatedOffer;
@@ -75,7 +85,6 @@ const updateOffer = async (req, res, next) => {
 
 	updatedOffer.name = name;
 	updatedOffer.percentage = percentage;
-	updatedOffer.shopId = shopId;
 	updatedOffer.image = image;
 	
 	try {
@@ -138,9 +147,13 @@ const addProduct = async (req, res, next) => {
 	}
 
 	offer.products.push(productId);
+	product.offer = true;
+	product.offerId = offerId;
+	product.offerPrice = product.amount-((product.amount*offer.percentage)/100);
 
 	try {
 		await offer.save();
+		await product.save();
 	} catch (error) {
 		return next(new HttpError('Adding product to the offer failed', 500));
 	}
@@ -172,6 +185,18 @@ const removeProduct = async (req, res, next) => {
 	} else {
 		return next(new HttpError('Could not find a product for the provided id.', 404));
 	}
+
+	let product;
+
+	try {
+		product = await Products.findById(productId);
+	} catch (error) {
+		return next(new HttpError('Could not find a product for the provided id.', 404));
+	}
+
+	product.offerPrice = product.amount;
+	product.offer = false;
+	product.offerId = null;
 
 	try {
 		await offer.save();
