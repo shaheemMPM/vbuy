@@ -15,6 +15,7 @@ const adminRoutes = require('./routes/dashboard/admin-routes');
 const userRoutes = require('./routes/mobile/user-routes');
 const mobCategoriesRoutes = require('./routes/mobile/categories-routes');
 const mobSubcategoriesRoutes = require('./routes/mobile/subcategories-routes');
+const mobShopList = require('./routes/mobile/shop-routes');
 
 // Importing general models
 const HttpError = require('./models/http-error');
@@ -35,6 +36,7 @@ app.use('/api/dashboard/v1/admin', adminRoutes);
 app.use('/api/mobile/v1/user', userRoutes);
 app.use('/api/mobile/v1/categories', mobCategoriesRoutes);
 app.use('/api/mobile/v1/subCategories', mobSubcategoriesRoutes);
+app.use('/api/mobile/v1/shops', mobShopList);
 
 
 app.use((req, res, next) => {

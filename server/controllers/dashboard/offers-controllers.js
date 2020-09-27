@@ -38,11 +38,13 @@ const createOffer = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
 
-	const { name, percentage } = req.body;
+	const { name, percentage, shopId, image } = req.body;
 	
 	const createdOffer = new Offers({
 		name,
-		percentage
+		percentage,
+		shopId,
+		image
 	});
 
 	try {
@@ -60,7 +62,7 @@ const updateOffer = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
 
-	const { name, percentage } = req.body;
+	const { name, percentage, shopId, image } = req.body;
 	const offerId = req.params.oid;
 
 	let updatedOffer;
@@ -73,6 +75,8 @@ const updateOffer = async (req, res, next) => {
 
 	updatedOffer.name = name;
 	updatedOffer.percentage = percentage;
+	updatedOffer.shopId = shopId;
+	updatedOffer.image = image;
 	
 	try {
 		await updatedOffer.save();
@@ -160,7 +164,7 @@ const removeProduct = async (req, res, next) => {
 	}
 
 	const isInArray = offer.products.some(function (product) {
-    return product.equals(productId);
+    	return product.equals(productId);
 	});
 	
 	if (isInArray) {
@@ -177,6 +181,8 @@ const removeProduct = async (req, res, next) => {
 
 	res.status(200).json({ offer });
 }
+
+
 
 exports.getOffers = getOffers;
 exports.getOfferById = getOfferById;
