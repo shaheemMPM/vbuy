@@ -13,7 +13,7 @@ const productSchema = new Schema({
     subcategoryId: { type: ObjectId, required:true },
     sgst: { type: Number, required: true },
     cgst: { type: Number, required: true },
-    offer: { type: Boolean, default: false },
+    offer: { type: Boolean, required: false, default: false },
     offerId: { type: ObjectId, required:false, default: null },
     offerPrice: { type: Number, required: false }
 });
