@@ -41,13 +41,12 @@ const createOffer = async (req, res, next) => {
 
 	const { name, percentage, shopId, image } = req.body;
 
-	//check if shjop exists??
 	let shop;
 
 	try {
 		shop = await Shops.findById(shopId);
 	} catch (error) {
-		return next(new HttpError('no shops were found on given shop id', 500));
+		return next(new HttpError('no shops were found on given shop id', 404));
 	}
 	
 	const createdOffer = new Offers({
