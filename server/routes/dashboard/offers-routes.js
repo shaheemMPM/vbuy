@@ -17,6 +17,8 @@ router.post(
 	[
 		check('name').not().isEmpty(),
     check('percentage').not().isEmpty(),
+    check('shopId').not().isEmpty(),
+    check('image').not().isEmpty()
   ],
   offersController.createOffer
 );
@@ -25,7 +27,8 @@ router.patch(
   '/:oid',
   [
     check('name').not().isEmpty(),
-    check('percentage').not().isEmpty()
+    check('percentage').not().isEmpty(),
+    check('image').not().isEmpty()
   ],
   offersController.updateOffer
 );

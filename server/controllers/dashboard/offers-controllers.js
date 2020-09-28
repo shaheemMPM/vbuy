@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../../models/http-error');
 const Offers = require('../../models/offers');
 const Products = require('../../models/products');
+const Shops = require('../../models/shops');
 
 const getOffers = async (req, res, next) => {
 	let offers;
@@ -38,11 +39,21 @@ const createOffer = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
 
-	const { name, percentage } = req.body;
+	const { name, percentage, shopId, image } = req.body;
+
+	let shop;
+
+	try {
+		shop = await Shops.findById(shopId);
+	} catch (error) {
+		return next(new HttpError('no shops were found on given shop id', 404));
+	}
 	
 	const createdOffer = new Offers({
 		name,
-		percentage
+		percentage,
+		shopId,
+		image
 	});
 
 	try {
@@ -60,7 +71,7 @@ const updateOffer = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
 
-	const { name, percentage } = req.body;
+	const { name, percentage, image } = req.body;
 	const offerId = req.params.oid;
 
 	let updatedOffer;
@@ -73,6 +84,7 @@ const updateOffer = async (req, res, next) => {
 
 	updatedOffer.name = name;
 	updatedOffer.percentage = percentage;
+	updatedOffer.image = image;
 	
 	try {
 		await updatedOffer.save();
@@ -134,9 +146,13 @@ const addProduct = async (req, res, next) => {
 	}
 
 	offer.products.push(productId);
+	product.offer = true;
+	product.offerId = offerId;
+	product.offerPrice = product.amount-((product.amount*offer.percentage)/100);
 
 	try {
 		await offer.save();
+		await product.save();
 	} catch (error) {
 		return next(new HttpError('Adding product to the offer failed', 500));
 	}
@@ -160,7 +176,7 @@ const removeProduct = async (req, res, next) => {
 	}
 
 	const isInArray = offer.products.some(function (product) {
-    return product.equals(productId);
+    	return product.equals(productId);
 	});
 	
 	if (isInArray) {
@@ -168,6 +184,18 @@ const removeProduct = async (req, res, next) => {
 	} else {
 		return next(new HttpError('Could not find a product for the provided id.', 404));
 	}
+
+	let product;
+
+	try {
+		product = await Products.findById(productId);
+	} catch (error) {
+		return next(new HttpError('Could not find a product for the provided id.', 404));
+	}
+
+	product.offerPrice = product.amount;
+	product.offer = false;
+	product.offerId = null;
 
 	try {
 		await offer.save();
@@ -177,6 +205,8 @@ const removeProduct = async (req, res, next) => {
 
 	res.status(200).json({ offer });
 }
+
+
 
 exports.getOffers = getOffers;
 exports.getOfferById = getOfferById;
