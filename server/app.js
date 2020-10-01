@@ -16,6 +16,7 @@ const userRoutes = require('./routes/mobile/user-routes');
 const mobCategoriesRoutes = require('./routes/mobile/categories-routes');
 const mobSubcategoriesRoutes = require('./routes/mobile/subcategories-routes');
 const mobShopList = require('./routes/mobile/shop-routes');
+const mobOfferRoutes = require('./routes/mobile/offers-routes');
 const mobProductsList = require('./routes/mobile/products-routes');
 
 // Importing general models
@@ -38,8 +39,8 @@ app.use('/api/mobile/v1/user', userRoutes);
 app.use('/api/mobile/v1/categories', mobCategoriesRoutes);
 app.use('/api/mobile/v1/subcategories', mobSubcategoriesRoutes);
 app.use('/api/mobile/v1/shops', mobShopList);
+app.use('/api/mobile/v1/offers', mobOfferRoutes);
 app.use('/api/mobile/v1/products', mobProductsList);
-
 
 app.use((req, res, next) => {
   const error = new HttpError('Could not find this route.', 404);

@@ -1,0 +1,33 @@
+const { validationResult } = require('express-validator');
+
+const HttpError = require('../../models/http-error');
+const Offers = require('../../models/offers');
+const Products = require('../../models/products');
+
+const getOffers = async (req, res, next) => {
+	let offers;
+
+	try {
+		offers = await Offers.find().select('name image percentage');
+	} catch (error) {
+		return next(new HttpError('Reading offers failed.', 500));
+	}
+
+	res.status(200).json({ offers });
+}
+
+const getProducts = async (req, res, next) => {
+	let offerId = req.params.oid;
+	let products;
+
+	try {
+		products = await Products.find({offerId: offerId});
+	} catch (error) {
+		return next(new HttpError('Reading products failed.', 500));
+	}
+
+	res.status(200).json({products});
+}
+
+exports.getOffers = getOffers;
+exports.getProducts = getProducts;
