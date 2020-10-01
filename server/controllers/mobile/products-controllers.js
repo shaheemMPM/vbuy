@@ -7,7 +7,7 @@ const getProductsBySubcategoryId = async (req, res, next) =>{
 	let products;
 
 	try {
-		products = await Products.find({subcategoryId: subcategoryId}).select('name image amount offer offerPice');
+		products = await Products.find({subcategoryId: subcategoryId}).select('name image amount offer offerPrice');
 	} catch (error) {
 		return next(new HttpError('Reading products with given subcategory id failed.', 500));
 	}
