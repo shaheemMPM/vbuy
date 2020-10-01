@@ -105,7 +105,7 @@ const login = async (req, res, next) => {
 		token = jwt.sign({
 			adminId: existingAdmin.id,
 			email: existingAdmin.email
-		}, 'nexero_super_boys_supersecret_key', { expiresIn: '1h' });
+		}, 'nexero_super_boys_supersecret_key'); //, { expiresIn: '1h' }
 	} catch (err) {
 		const error = new HttpError('Logging in failed, please try again later.', 500);
 		return next(error);
