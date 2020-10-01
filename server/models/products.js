@@ -6,7 +6,8 @@ const ObjectId = Schema.ObjectId;
 const productSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
-    amount: { type: Number, required: true},
+    amount: { type: Number, required: true },
+    shopId: { type: ObjectId, required: true },
     batchCode: { type: String, required: true },
     image: [String],
     popular: { type: Boolean, default: false },
