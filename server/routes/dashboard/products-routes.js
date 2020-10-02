@@ -48,9 +48,9 @@ router.patch('/popular/add/:pid', productsController.addProductPopular);
 
 router.patch('/popular/remove/:pid', productsController.removeProductPopular);
 
-router.patch('/size/:pid', productsController.updateSizeChart);//update size_chart
+router.patch('/size/:pid', productsController.updateSizeChart);
 
-router.patch('/pincode/:pid', productsController.updatePinCode);//update pin_code
+router.patch('/pincode/:pid', productsController.updatePinCode);
 
 module.exports = router;
 
