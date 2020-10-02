@@ -2,6 +2,7 @@ const { validationResult } = require('express-validator');
 
 const Products = require('../../models/products');
 const SubCategory = require('../../models/subcategories');
+const Shops = require('../../models/shops');
 const HttpError = require('../../models/http-error');
 
 const getProducts = async (req, res, next) =>{
@@ -54,8 +55,20 @@ const createProduct = async(req, res, next) => {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
   
-  const { name, description, amount, batchCode, image, subcategoryId, sgst, cgst } = req.body;
+  const { name, description, amount, shopId, batchCode, image, subcategoryId, sgst, cgst } = req.body;
 
+  let shop;
+
+	try {
+    shop = await Shops.findById(shopId);
+	} catch (error) {
+    return next(new HttpError('Something went wrong, could not find a shop with given id.', 500));
+	}
+
+	if(!shop){
+    return next(new HttpError('Could not find a shop for the provided id.', 404));
+  }
+  
   let subcategory;
 
 	try {
@@ -72,6 +85,7 @@ const createProduct = async(req, res, next) => {
     name,
     description,
     amount,
+    shopId,
     batchCode,
     image,
     subcategoryId,
