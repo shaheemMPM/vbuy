@@ -48,6 +48,10 @@ router.patch('/popular/add/:pid', productsController.addProductPopular);
 
 router.patch('/popular/remove/:pid', productsController.removeProductPopular);
 
+router.patch('/size/:pid', productsController.updateSizeChart);
+
+router.patch('/pincode/:pid', productsController.updatePinCode);
+
 module.exports = router;
 
 module.exports = router;
