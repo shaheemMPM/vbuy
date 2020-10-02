@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../../models/http-error');
 const SubCategory = require('../../models/subcategories');
 const Category = require('../../models/categories');
+const Shop = require('../../models/shops');
 
 const getSubCategories = async (req, res, next) => {
 	let subcategories;
@@ -55,9 +56,10 @@ const createSubCategory = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
 
-	const { name, image, categoryId} = req.body;
+	const { name, image, categoryId, shopId } = req.body;
 
 	let category;
+
 	try {
 		category = await Category.findById(categoryId);
 	} catch (error) {
@@ -68,10 +70,23 @@ const createSubCategory = async (req, res, next) => {
 		return next(new HttpError('Could not find a category for the provided id.', 404));
 	}
 
+	let shop;
+	
+	try {
+		shop = await Shop.findById(shopId);
+	} catch (error) {
+		return next(new HttpError('Something went wrong, could not find a shop with given id.', 500));
+	}
+
+	if(!shop){
+		return next(new HttpError('Could not find a shop for the provided id.', 404));
+	}
+
 	const createdSubCategory = new SubCategory({
 		name,
 		image,
-		categoryId
+		categoryId,
+		shopId
 	});
 
 	try {

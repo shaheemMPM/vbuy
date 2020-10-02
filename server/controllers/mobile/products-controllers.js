@@ -34,7 +34,21 @@ const getProductsById = async(req, res, next) => {
 	}
 	
 	res.json({ product });
-  };
+};
+
+const getPopularProductsByShopId = async (req, res, next) => {
+	let shopId = req.params.sid;
+	let products;
+
+	try {
+		products = await Products.find({ shopId: shopId, popular: true }).select('name description image amount offer offerPrice');
+	} catch (error) {
+		return next(new HttpError('Something went wrong, could not able to find product for given id.', 500));
+	}
+
+	res.status(200).json({ products });
+}
 
 exports.getProductsBySubcategoryId = getProductsBySubcategoryId;
 exports.getProductsById = getProductsById;
+exports.getPopularProductsByShopId = getPopularProductsByShopId;
