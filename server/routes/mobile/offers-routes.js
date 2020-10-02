@@ -7,8 +7,6 @@ const router = express.Router();
 
 router.use(checkAuth);
 
-router.get('/', offersController.getOffers);
-
 router.get('/shop/:sid', offersController.getOffersByShopId);
 
 router.get('/products/:oid', offersController.getProducts);
