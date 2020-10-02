@@ -41,7 +41,12 @@ router.patch(
   productsController.updateProduct
 );
 
+
 router.delete('/:pid', productsController.deleteProduct);
+
+router.patch('/popular/add/:pid', productsController.addProductPopular);
+
+router.patch('/popular/remove/:pid', productsController.removeProductPopular);
 
 module.exports = router;
 

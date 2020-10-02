@@ -15,10 +15,11 @@ const adminRoutes = require('./routes/dashboard/admin-routes');
 const userRoutes = require('./routes/mobile/user-routes');
 const mobCategoriesRoutes = require('./routes/mobile/categories-routes');
 const mobSubcategoriesRoutes = require('./routes/mobile/subcategories-routes');
-const mobShopList = require('./routes/mobile/shop-routes');
+const mobShopRoutes = require('./routes/mobile/shop-routes');
 const mobOfferRoutes = require('./routes/mobile/offers-routes');
-const mobProductsList = require('./routes/mobile/products-routes');
+const mobProductsRoutes = require('./routes/mobile/products-routes');
 const mobHomeRoutes = require('./routes/mobile/home-routes');
+
 
 // Importing general models
 const HttpError = require('./models/http-error');
@@ -34,14 +35,13 @@ app.use('/api/dashboard/v1/subcategories', subcategoriesRoutes);
 app.use('/api/dashboard/v1/products', productsRoutes);
 app.use('/api/dashboard/v1/offers', offersRoutes);
 app.use('/api/dashboard/v1/admin', adminRoutes);
-
 // mobile route initializing
 app.use('/api/mobile/v1/user', userRoutes);
 app.use('/api/mobile/v1/categories', mobCategoriesRoutes);
 app.use('/api/mobile/v1/subcategories', mobSubcategoriesRoutes);
-app.use('/api/mobile/v1/shops', mobShopList);
+app.use('/api/mobile/v1/shops', mobShopRoutes);
 app.use('/api/mobile/v1/offers', mobOfferRoutes);
-app.use('/api/mobile/v1/products', mobProductsList);
+app.use('/api/mobile/v1/products', mobProductsRoutes);
 app.use('/api/mobile/v1/home', mobHomeRoutes);
 
 app.use((req, res, next) => {
