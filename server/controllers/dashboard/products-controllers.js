@@ -214,6 +214,64 @@ const removeProductPopular = async (req, res, next) => {
 	res.status(200).json({ product });
 }
 
+
+const updateSizeChart = async (req, res, next) => {
+	const productId = req.params.pid;
+  const {size_chart} = req.body;
+
+	let product;
+
+	try {
+		product = await Products.findById(productId);
+	} catch (error) {
+		return next(new HttpError('Could not find a product for the provided id.', 500));
+	}
+
+	if (!product) {
+		return next(new HttpError('Could not find a product for the provided id.', 404));
+	}
+
+	product.size_chart = size_chart;
+
+	try {
+		await product.save();
+	} catch (error) {
+    console.log(error);
+		return next(new HttpError('Toggling product to popular failed', 500));
+	}
+
+	res.status(200).json({ product });
+}
+
+const updatePinCode = async (req, res, next) => {
+	const productId = req.params.pid;
+  const {pincode_list} = req.body;
+
+	let product;
+
+	try {
+		product = await Products.findById(productId);
+	} catch (error) {
+		return next(new HttpError('Could not find a product for the provided id.', 500));
+	}
+
+	if (!product) {
+		return next(new HttpError('Could not find a product for the provided id.', 404));
+	}
+
+	product.pincode_list = pincode_list;
+
+	try {
+		await product.save();
+	} catch (error) {
+    console.log(error);
+		return next(new HttpError('Toggling product to popular failed', 500));
+	}
+
+	res.status(200).json({ product });
+}
+
+
 exports.getProducts = getProducts;
 exports.getProductsById = getProductsById;
 exports.createProduct = createProduct;
@@ -222,3 +280,5 @@ exports.deleteProduct = deleteProduct;
 exports.getProductsBySubcategoryId = getProductsBySubcategoryId;
 exports.addProductPopular = addProductPopular;
 exports.removeProductPopular = removeProductPopular;
+exports.updateSizeChart = updateSizeChart;
+exports.updatePinCode = updatePinCode;
