@@ -6,9 +6,10 @@ const Offers = require('../../models/offers');
 
 const getPopularProductsAndOffers = async (req, res, next) => {
     let popularProducts;
+    let shopId = req.params.sid;
 
     try {
-        popularProducts = await Products.find({popular: true});
+        popularProducts = await Products.find({shopId: shopId, popular: true});
     } catch (error) {
         return next(new HttpError('Reading products failed.', 500))
     }
@@ -16,7 +17,7 @@ const getPopularProductsAndOffers = async (req, res, next) => {
     let offers;
 
     try {
-        offers = await Offers.find();
+        offers = await Offers.find({shopId: shopId});
     } catch (error) {
         return next(new HttpError('Reading offers failed.', 500));
     }
