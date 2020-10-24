@@ -4,6 +4,7 @@ const HttpError = require('../../models/http-error');
 const SubCategory = require('../../models/subcategories');
 const Category = require('../../models/categories');
 const Shop = require('../../models/shops');
+const Product = require('../../models/products');
 
 const getSubCategories = async (req, res, next) => {
 	let subcategories;
@@ -143,6 +144,24 @@ const deleteSubCategory = async (req, res, next) => {
 
 	if (!subcategory) {
 		return next(new HttpError('Could not find a sub category for the provided id', 404));
+	}
+
+	let products;
+
+	try {
+		products = await Product.find({ subcategoryId: subcategoryId });
+	} catch(error) {
+		return next(new HttpError('Reading products failed', 500));
+	}
+
+	if(!products) {
+		return next(new HttpError('Could not find products for the provided subcategoryId', 404));
+	}
+
+	try {
+		await Product.find({ subcategoryId: subcategoryId }).remove();
+	} catch(error) {
+		return next(new HttpError('Coult not delete products for the provided subcategoryId', 500));
 	}
 
 	try {
