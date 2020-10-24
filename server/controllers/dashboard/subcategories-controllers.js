@@ -159,7 +159,7 @@ const deleteSubCategory = async (req, res, next) => {
 	}
 
 	try {
-		await Products.find({ subcategoryId: subcategoryId }).remove();
+		await Product.find({ subcategoryId: subcategoryId }).remove();
 	} catch(error) {
 		return next(new HttpError('Coult not delete products for the provided subcategoryId', 500));
 	}
