@@ -3,6 +3,8 @@ const { validationResult } = require('express-validator');
 const HttpError = require('../../models/http-error');
 const Categories = require('../../models/categories');
 const Shops = require('../../models/shops');
+const SubCategory = require('../../models/subcategories');
+const Products = require('../../models/products');
 
 const getCategories = async (req, res, next) => {
 	let categories;
@@ -115,8 +117,8 @@ const updateCategory = async (req, res, next) => {
 
 const deleteCategory = async (req, res, next) => {
 	const categoryId = req.params.cid;
-	let category;
 
+	let category;
 	try {
 		category = await Categories.findById(categoryId);
 	} catch (error) {
@@ -125,6 +127,40 @@ const deleteCategory = async (req, res, next) => {
 
 	if (!category) {
 		return next(new HttpError('Could not find a category for the provided id.', 404));
+	}
+
+	let subcategories;
+	try {
+		subcategories = await SubCategory.find({ categoryId: categoryId });
+	} catch(error) {
+		return next(new HttpError('Could not find subcategories for the provided categoryId', 500));
+	}
+
+	if(!subcategories) {
+		return next(new HttpError('Could not find a subcategories for the provided categoryId', 404));
+	}
+
+	let products;
+  	try {
+    	products = await Products.find({ categoryId: categoryId });
+  	} catch(error) {
+    	return next(new HttpError('Could not find products for the provided categoryId', 500));
+  	}
+
+  	if (!products) {
+    	return next(new HttpError('Could not find products for the provided categoryId.', 404));
+	}
+
+	try {
+		await Products.find({ categoryId: categoryId }).remove();
+	} catch(error) {
+		return next(new HttpError('Coult not delete products for the provided categoryId', 500));
+	}
+	
+	try {
+		await SubCategory.find({ categoryId: categoryId }).remove();
+	} catch(error) {
+		return next(new HttpError('Could not delete subcategories for the provided categoryId', 500));
 	}
 
 	try {

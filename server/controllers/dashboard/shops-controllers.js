@@ -2,6 +2,9 @@ const { validationResult } = require('express-validator');
 
 const HttpError = require('../../models/http-error');
 const Shops = require('../../models/shops');
+const Category = require('../../models/categories');
+const SubCategory = require('../../models/subcategories');
+const Products = require('../../models/products');
 
 const getShops = async (req, res, next) => {
   let shops;
@@ -92,6 +95,7 @@ const updateShop = async (req, res, next) => {
 
 const deleteShop = async (req, res, next) => {
   const shopId = req.params.sid;
+
   let shop;
   try {
     shop = await Shops.findById(shopId);
@@ -101,6 +105,57 @@ const deleteShop = async (req, res, next) => {
 
   if (!shop) {
     return next(new HttpError('Could not find a shop for the provided id.', 404));
+  }
+
+  let categories;
+  try {
+    categories = await Category.find({ shopId: shopId });
+  } catch (error) {
+    return next(new HttpError('Could not find categories for the provided shopId.', 500));
+  }
+
+  if (!categories) {
+    return next(new HttpError('Could not find categories for the provided id.', 404));
+  }
+
+  let subcategories;
+  try {
+    subcategories = await SubCategory.find({ shopId: shopId });
+  } catch(error) {
+    return next(new HttpError('Could not find subcategories for the provided shopId.', 500));
+  }
+
+  if (!subcategories) {
+    return next(new HttpError('Could not find subcategories for the provided id.', 404));
+  }
+
+  let products;
+  try {
+    products = await Products.find({ shopId: shopId });
+  } catch(error) {
+    return next(new HttpError('Could not find products for the provided shopId', 500));
+  }
+
+  if (!products) {
+    return next(new HttpError('Could not find products for the provided id.', 404));
+  }
+
+  try {
+    await Products.find({ shopId: shopId }).remove();
+  } catch(error) {
+    return next(new HttpError('Coult not delete products for the provided shopId', 500));
+  }
+
+  try {
+    await SubCategory.find({ shopId: shopId }).remove();
+  } catch(error) {
+    return next(new HttpError('Could not delete subcategories for the provided shopId', 500));
+  }
+
+  try {
+    await Category.find({ shopId: shopId }).remove();
+  } catch(error) {
+    return next(new HttpError('Could not delete categories for the provided shopId', 500));
   }
 
   try {
