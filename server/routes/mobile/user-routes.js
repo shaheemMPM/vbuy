@@ -9,8 +9,7 @@ router.post(
   '/signup',
   [
     check('name').not().isEmpty(),
-    check('email').normalizeEmail().isEmail(),
-    check('password').isLength({ min: 8 })
+    check('email').isEmail(),
   ],
   userController.signup
 );
@@ -18,7 +17,7 @@ router.post(
 router.post(
   '/login', 
   [
-    check('email').normalizeEmail().isEmail(),
+    check('email').isEmail(),
     check('password').isLength({ min: 8 })
   ],
   userController.login
