@@ -5,6 +5,8 @@ const SubCategory = require('../../models/subcategories');
 const Category = require('../../models/categories');
 const Shops = require('../../models/shops');
 const HttpError = require('../../models/http-error');
+const Offers = require('../../models/offers');
+const offers = require('../../models/offers');
 
 const getProducts = async (req, res, next) =>{
   let products;
@@ -156,6 +158,10 @@ const updateProduct = async(req, res, next) => {
 const deleteProduct = async(req, res, next) => {
   const productId = req.params.pid;
   let product;
+
+  let offerId;
+  let offer;
+
   try {
     product = await Products.findById(productId);
   } catch (error) {
@@ -163,8 +169,30 @@ const deleteProduct = async(req, res, next) => {
   }
 
   if (!product) {
-    return next(new HttpError('Could not find a shop for the provided id.', 404));
+    return next(new HttpError('Could not find a product for the provided id.', 404));
   }
+
+  offerId = product.offerId;
+
+  if (offerId){
+    try {
+      offer = await Offers.findById(offerId);
+    } catch (error) {
+      return next(new HttpError('Could not find a offer for the provided id.', 500));
+    }
+  
+    if (!offer) {
+      return next(new HttpError('Could not find a offer for the provided id.', 404));
+    }
+
+    try {
+      await offer.products.remove(productId);
+      await offer.save();      
+    } catch (error) {
+      return next(new HttpError('Could not delete the product from the offer for the provided id.', 500));
+    }
+  }
+
 
   try {
     await product.remove();
