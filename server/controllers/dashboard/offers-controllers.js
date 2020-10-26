@@ -193,6 +193,10 @@ const removeProduct = async (req, res, next) => {
 		return next(new HttpError('Could not find a product for the provided id.', 404));
 	}
 
+	if (!product) {
+		return next(new HttpError('Could not find a product for the provided id.', 404));
+	}
+
 	product.offerPrice = product.amount;
 	product.offer = false;
 	product.offerId = null;
