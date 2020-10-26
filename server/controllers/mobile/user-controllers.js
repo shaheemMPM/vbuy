@@ -1,6 +1,8 @@
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require("nodemailer");
+const password_generator = require('generate-password');
 
 const HttpError = require('../../models/http-error');
 const User = require('../../models/user');
@@ -11,7 +13,7 @@ const signup = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
   
-	let { name, email, mobile, password } = req.body;
+	let { name, email, mobile } = req.body;
 
 	email = email.toLowerCase();
   
@@ -27,6 +29,11 @@ const signup = async (req, res, next) => {
 		const error = new HttpError('User exists already, please login instead.', 422);
 		return next(error);
 	}
+
+	let password = password_generator.generate({
+		length: 15,
+		numbers: true
+	});
   
 	let hashedPassword;
 	try {
@@ -57,6 +64,8 @@ const signup = async (req, res, next) => {
 		const error = new HttpError('Signing up failed, please try again later.', 500);
 		return next(error);
 	}
+
+	sendMail(name, email, password);
   
 	let token;
 	try {
@@ -134,6 +143,33 @@ const login = async (req, res, next) => {
 		token: token
 	});
 }
-  
+
+async function sendMail(name, email, password) {
+    var transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'nexerotech@gmail.com',
+            pass: '3000Shits!'
+        }
+    });
+      
+    var mailOptions = {
+        from: 'nexerotech@gmail.com',
+        to: email,
+        subject: 'VBuy Login credentials',
+        text: `Hi ${name}, \nHere is your password for your new VBuy account.
+				Thank you for using VBuy and Happy Purchasing!!
+				\n\nPassword: ${password}`
+        // html: '<h1>Hi Smartherd</h1><p>Your Messsage</p>'        
+	};
+	
+	try {
+		let info = await transporter.sendMail(mailOptions);
+		console.log('Email sent: ' + info.response);
+	} catch(err) {
+		console.log(err);
+	}
+}
+
 exports.signup = signup;
 exports.login = login;
