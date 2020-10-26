@@ -154,14 +154,12 @@ const deleteSubCategory = async (req, res, next) => {
 		return next(new HttpError('Reading products failed', 500));
 	}
 
-	if(!products) {
-		return next(new HttpError('Could not find products for the provided subcategoryId', 404));
-	}
-
-	try {
-		await Product.find({ subcategoryId: subcategoryId }).remove();
-	} catch(error) {
-		return next(new HttpError('Coult not delete products for the provided subcategoryId', 500));
+	if(products) {
+		try {
+			await Product.find({ subcategoryId: subcategoryId }).remove();
+		} catch(error) {
+			return next(new HttpError('Coult not delete products for the provided subcategoryId', 500));
+		}
 	}
 
 	try {
