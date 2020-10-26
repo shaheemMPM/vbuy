@@ -12,6 +12,8 @@ const signup = async (req, res, next) => {
 	}
   
 	let { name, email, mobile, password } = req.body;
+
+	email = email.toLowerCase();
   
 	let existingUser;
 	try {
@@ -82,7 +84,9 @@ const login = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
 	
-	const { email, password } = req.body;
+	let { email, password } = req.body;
+
+	email = email.toLowerCase();
   
 	let existingUser;
   
