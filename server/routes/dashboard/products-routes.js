@@ -52,6 +52,8 @@ router.patch('/size/:pid', productsController.updateSizeChart);
 
 router.patch('/pincode/:pid', productsController.updatePinCode);
 
+router.patch('/statustoggle/:pid', productsController.toggleStatus);
+
 module.exports = router;
 
 module.exports = router;

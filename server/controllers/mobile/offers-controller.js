@@ -22,7 +22,7 @@ const getProducts = async (req, res, next) => {
 	let products;
 
 	try {
-		products = await Products.find({offerId: offerId}).select('name description image amount offer offerPrice');
+		products = await Products.find({offerId: offerId, isActive: true}).select('name description image amount offer offerPrice');
 	} catch (error) {
 		return next(new HttpError('Reading products failed.', 500));
 	}

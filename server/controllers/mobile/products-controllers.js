@@ -7,7 +7,7 @@ const getProductsBySubcategoryId = async (req, res, next) =>{
 	let products;
 
 	try {
-		products = await Products.find({subcategoryId: subcategoryId}).select('name image amount offer offerPrice');
+		products = await Products.find({subcategoryId: subcategoryId, isActive:true}).select('name image amount offer offerPrice');
 	} catch (error) {
 		return next(new HttpError('Reading products with given subcategory id failed.', 500));
 	}
@@ -41,7 +41,7 @@ const getPopularProductsByShopId = async (req, res, next) => {
 	let products;
 
 	try {
-		products = await Products.find({ shopId: shopId, popular: true }).select('name description image amount offer offerPrice');
+		products = await Products.find({ shopId: shopId, popular: true, isActive:true }).select('name description image amount offer offerPrice');
 	} catch (error) {
 		return next(new HttpError('Something went wrong, could not able to find product for given id.', 500));
 	}

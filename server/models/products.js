@@ -19,7 +19,8 @@ const productSchema = new Schema({
     offerId: { type: ObjectId, required:false, default: null },
     offerPrice: { type: Number, required: false },
     size_chart: { type: [String], default: [] },
-    pincode_list: { type: [Number], default: [] }
+    pincode_list: { type: [Number], default: [] },
+    isActive: { type: Boolean, required: true, default: false},
 });
 
 module.exports = mongoose.model('Products', productSchema);
