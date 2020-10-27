@@ -28,7 +28,17 @@ router.post(
   [
     check('email').isEmail(),
   ],
-  userController.resetpassword
+  userController.resetPassword
+);
+
+router.post(
+  '/changepassword',
+  [
+    check('email').isEmail(),
+    check('password').isLength({ min: 8 }),
+    check('newPassword').isLength({ min: 8 }),
+  ],
+  userController.changePassword
 );
 
 module.exports = router;
