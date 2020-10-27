@@ -65,7 +65,7 @@ const signup = async (req, res, next) => {
 		return next(error);
 	}
 
-	sendMail(name, email, password);
+	sendMail(name, email, password, false);
   
 	let token;
 	try {
@@ -144,22 +144,77 @@ const login = async (req, res, next) => {
 	});
 }
 
-async function sendMail(name, email, password) {
+const resetpassword = async (req, res, next) => {
+	let { email } = req.body;
+
+	email = email.toLowerCase();
+
+	let user;
+
+	try {
+		user = await User.findOne({ email: email });
+	} catch (err) {
+		const error = new HttpError('Checking users failed, please try again later.', 500);
+		return next(error);
+	}
+
+	if (!user) {
+		const error = new HttpError('Could not find an account linked with the given mail.', 404);
+		return next(error);
+	}
+
+	let password = password_generator.generate({
+		length: 15,
+		numbers: true
+	});
+
+	let hashedPassword;
+	try {
+	  	hashedPassword = await bcrypt.hash(password, 12);
+	} catch (err) {
+		const error = new HttpError('Could not reset password, please try again.', 500);
+		return next(error);
+	}
+
+	user.password = hashedPassword;
+
+	try {
+		await user.save();
+	} catch (err) {
+		return next(new HttpError('Updating user failed', 500));
+	}
+
+	sendMail(user.name, email, password, true);
+	res.status(200).json({ message: "Password sent to the mail address" });
+}
+
+async function sendMail(name, email, password, forgot) {
     var transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
             user: 'nexerotech@gmail.com',
             pass: '3000Shits!'
         }
-    });
+	});
+	
+	let mailText, mailSubject;
+	if(forgot) {
+		mailSubject = 'VBuy account password reset';
+		mailText = `Hi ${name}, \nHere is your new password for your VBuy account.
+		Thank you for using VBuy and Happy Purchasing!!
+		\n\nPassword: ${password}`;
+	} else {
+		mailSubject = 'VBuy Login credentials';
+		mailText = `Hi ${name}, \nHere is your password for your new VBuy account.
+		Thank you for using VBuy and Happy Purchasing!!
+		\n\nPassword: ${password}`;
+	}
       
     var mailOptions = {
         from: 'nexerotech@gmail.com',
         to: email,
-        subject: 'VBuy Login credentials',
-        text: `Hi ${name}, \nHere is your password for your new VBuy account.
-				Thank you for using VBuy and Happy Purchasing!!
-				\n\nPassword: ${password}`
+        subject: mailSubject,
+        text: mailText
         // html: '<h1>Hi Smartherd</h1><p>Your Messsage</p>'        
 	};
 	
@@ -173,3 +228,4 @@ async function sendMail(name, email, password) {
 
 exports.signup = signup;
 exports.login = login;
+exports.resetpassword = resetpassword;

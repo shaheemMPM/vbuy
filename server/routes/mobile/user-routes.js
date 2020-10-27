@@ -23,4 +23,12 @@ router.post(
   userController.login
 );
 
+router.post(
+  '/forgotpassword',
+  [
+    check('email').isEmail(),
+  ],
+  userController.resetpassword
+);
+
 module.exports = router;
