@@ -136,8 +136,12 @@ const deleteCategory = async (req, res, next) => {
 		return next(new HttpError('Could not find subcategories for the provided categoryId', 500));
 	}
 
-	if(!subcategories) {
-		return next(new HttpError('Could not find a subcategories for the provided categoryId', 404));
+	if(subcategories) {
+		try {
+			await SubCategory.find({ categoryId: categoryId }).remove();
+		} catch(error) {
+			return next(new HttpError('Could not delete subcategories for the provided categoryId', 500));
+		}
 	}
 
 	let products;
@@ -147,20 +151,12 @@ const deleteCategory = async (req, res, next) => {
     	return next(new HttpError('Could not find products for the provided categoryId', 500));
   	}
 
-  	if (!products) {
-    	return next(new HttpError('Could not find products for the provided categoryId.', 404));
-	}
-
-	try {
-		await Products.find({ categoryId: categoryId }).remove();
-	} catch(error) {
-		return next(new HttpError('Coult not delete products for the provided categoryId', 500));
-	}
-	
-	try {
-		await SubCategory.find({ categoryId: categoryId }).remove();
-	} catch(error) {
-		return next(new HttpError('Could not delete subcategories for the provided categoryId', 500));
+  	if (products) {
+		try {
+			await Products.find({ categoryId: categoryId }).remove();
+		} catch(error) {
+			return next(new HttpError('Coult not delete products for the provided categoryId', 500));
+		}
 	}
 
 	try {
