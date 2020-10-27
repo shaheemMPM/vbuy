@@ -313,6 +313,32 @@ const updatePinCode = async (req, res, next) => {
 	res.status(200).json({ product });
 }
 
+const toggleStatus = async(req, res, next) => {
+  let productId = req.params.pid;
+  let product;
+
+  try {
+		product = await Products.findById(productId);
+	} catch (error) {
+		return next(new HttpError('Could not find a product for the provided id.', 500));
+  }
+  
+  if(!product){
+    return next(new HttpError('Could not find a product for the provided id.', 404));
+  }
+
+  product.isActive = !product.isActive;
+
+  try {
+    await product.save();
+  } catch (error) {
+    return next(new HttpError('updating product failed', 500));
+  }
+
+  res.status(200).json({ products: product});
+
+}
+
 
 exports.getProducts = getProducts;
 exports.getProductsById = getProductsById;
@@ -324,3 +350,4 @@ exports.addProductPopular = addProductPopular;
 exports.removeProductPopular = removeProductPopular;
 exports.updateSizeChart = updateSizeChart;
 exports.updatePinCode = updatePinCode;
+exports.toggleStatus = toggleStatus;

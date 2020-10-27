@@ -9,7 +9,7 @@ const getPopularProductsAndOffers = async (req, res, next) => {
     let shopId = req.params.sid;
 
     try {
-        popularProducts = await Products.find({shopId: shopId, popular: true});
+        popularProducts = await Products.find({shopId: shopId, popular: true, isActive:true});
     } catch (error) {
         return next(new HttpError('Reading products failed.', 500))
     }
