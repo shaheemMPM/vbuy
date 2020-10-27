@@ -2,6 +2,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 // Importing dashboard routes
 const shopsRoutes = require('./routes/dashboard/shops-routes');
@@ -25,6 +26,8 @@ const mobHomeRoutes = require('./routes/mobile/home-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
+
+app.use(cors());
 
 app.use(bodyParser.json());
 
