@@ -16,21 +16,21 @@ const getOffers = async (req, res, next) => {
 	res.status(200).json({offers});
 }
 
-const getOfferByShopId = async (req, res, next) => {
+const getOffersByShopId = async (req, res, next) => {
 	const shopId = req.params.sid;
-	let offer;
+	let offers;
 	
 	try {
-		offer = await Offers.find({shopId: shopId});
+		offers = await Offers.find({shopId: shopId});
 	} catch(error) {
 		return next(new HttpError('Reading offers failed', 500));
 	}
 
-	if (!offer) {
-		return next(new HttpError('Could not find an offer for the provided id.', 404));
+	if (!offers) {
+		return next(new HttpError('Could not find an offer for the provided shop id.', 404));
 	}
 
-	res.status(200).json({ offer });
+	res.status(200).json({ offers });
 }
 
 const getOfferById = async (req, res, next) => {
@@ -268,7 +268,7 @@ const removeProduct = async (req, res, next) => {
 
 
 exports.getOffers = getOffers;
-exports.getOfferByShopId = getOfferByShopId;
+exports.getOffersByShopId = getOffersByShopId;
 exports.getOfferById = getOfferById;
 exports.createOffer = createOffer;
 exports.updateOffer = updateOffer;
