@@ -10,6 +10,8 @@ router.use(checkAuth);
 
 router.get('/', offersController.getOffers);
 
+router.get('/shop/:sid', offersController.getOffersByShopId);
+
 router.get('/:oid', offersController.getOfferById);
 
 router.post(
