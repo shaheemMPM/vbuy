@@ -109,7 +109,45 @@ const deleteOffer = async (req, res, next) => {
 		return next(new HttpError('Could not find an offer for the provided id.', 404));
 	}
 
-  try {
+	let products;
+	try {
+		products = await Offers.findById(offerId).select('products');
+	} catch (error) {
+		return next(new HttpError('Could not find products for the provided id.', 500));
+	}
+	
+	if(!products) {
+		return next(new HttpError('Could not find any products associated with this offer', 404));
+	}
+
+	let productsList = products.products;
+
+	productsList.forEach(async productId => {
+		console.log(productId);
+
+		let product;
+		try {
+			product = await Products.findById(productId);
+		} catch (error) {
+			return next(new HttpError('Could not find a product for the provided id.', 500));
+		}
+
+		if(!product) {
+			return next(new HttpError('Could not find a product for the provided id', 404));
+		}
+		
+		product.offerPrice = product.amount;
+		product.offer = false;
+		product.offerId = null;
+
+		try {
+			await product.save();
+		} catch (error) {
+			return next(new HttpError('Removing offer from a product failed', 500));
+		}
+	});
+
+  	try {
 		await offer.remove();
 	} catch (error) {
 		return next(new HttpError('Could not delete an offer for the provided id.', 500));
