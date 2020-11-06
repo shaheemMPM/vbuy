@@ -6,7 +6,6 @@ const Category = require('../../models/categories');
 const Shops = require('../../models/shops');
 const HttpError = require('../../models/http-error');
 const Offers = require('../../models/offers');
-const offers = require('../../models/offers');
 
 const getProducts = async (req, res, next) =>{
   let products;
@@ -107,6 +106,7 @@ const createProduct = async(req, res, next) => {
     image,
     sgst,
     cgst,
+    offerPrice: amount
   });
 
   try {
