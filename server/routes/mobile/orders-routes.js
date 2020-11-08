@@ -15,15 +15,14 @@ router.get('/:pid', ordersController.getProductsById);
 router.post(
   '/',
   [
-    check('name').not().isEmpty(),
-    check('description').not().isEmpty(),
-    check('amount').not().isEmpty(),
-    check('batchCode').not().isEmpty(),
-    check('subcategoryId').not().isEmpty(),
-    check('sgst').not().isEmpty(),
-    check('cgst').not().isEmpty(),
+    check('productDetails.*.productId').not().isEmpty(),
+    check('productDetails.*.selectedSize').not().isEmpty(),
+    check('productDetails.*.quantity').not().isEmpty(),
+    check('address').not().isEmpty(),
+    check('modeOfPayment').not().isEmpty(),
+    check('netAmount').not().isEmpty()
   ],
-  ordersController.createProduct
+  ordersController.createOrder
 );
 
 module.exports = router;
