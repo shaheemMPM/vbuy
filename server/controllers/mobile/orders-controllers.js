@@ -9,9 +9,13 @@ const getOrders = async (req, res, next) =>{
   let userId = req.userData.userId;
 
   try {
-    orders = await Orders.find({userId : userId}).select('productDetails.productId productDetails.quantity currentStatus');
+    orders = await Orders.find({userId : userId}).select('totalItems currentStatus orderImage');
   } catch (error) {
     return next('Something went wrong', 500);
+  }
+
+  if (!orders) {
+    return next(new HttpError('Could not find a order for the provided user.', 404));
   }
 
   res.status(200).json({orders});
@@ -40,7 +44,7 @@ const createOrder = async(req, res, next) => {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
   }
   
-  const { productDetails, address, modeOfPayment, discountPrice, totalSgst, totalCgst, netAmount} = req.body;
+  const { productDetails, address, modeOfPayment, discountPrice, totalSgst, totalCgst, netAmount, orderImage} = req.body;
 
   let userId = req.userData.userId;
 
@@ -52,7 +56,9 @@ const createOrder = async(req, res, next) => {
     discountPrice,
     totalSgst,
     totalCgst,
-    netAmount
+    netAmount,
+    orderImage,
+    totalItems: productDetails.length
   });
 
   try {

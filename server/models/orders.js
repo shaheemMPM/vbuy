@@ -25,7 +25,9 @@ const orderSchema = new Schema({
     discountPrice: { type: String, required: true },
     totalSgst: { type: String, required: true },
     totalCgst: { type: String, required: true },
-    netAmount: { type: String, required: true }
+    netAmount: { type: String, required: true },
+    orderImage : {type: String, required:true},
+    totalItems : {type: Number, required: true, default:0}
 })
 
 module.exports = mongoose.model('Orders', orderSchema);
