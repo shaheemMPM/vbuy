@@ -6,13 +6,13 @@ const ObjectId = Schema.ObjectId;
 const orderSchema = new Schema({
     productDetails: [{
         productId: { type: ObjectId, required: true },
-        selectedSize: { type: String, required: true },
+        selectedSize: { type: String, required: false },
         quantity: { type: String, required: true }
     }],
     userId: { type: ObjectId, required: true },
     address: {
         name:{ type: String, required: true },
-        houseNo: { type: String, required: true },
+        houseNo: { type: String, required: false },
         street: { type: String, required: true },
         city: { type: String, required: true },
         state: { type: String, required: true },

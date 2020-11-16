@@ -16,7 +16,6 @@ router.post(
   '/',
   [
     check('productDetails.*.productId').not().isEmpty(),
-    check('productDetails.*.selectedSize').not().isEmpty(),
     check('productDetails.*.quantity').not().isEmpty(),
     check('address').not().isEmpty(),
     check('modeOfPayment').not().isEmpty(),
