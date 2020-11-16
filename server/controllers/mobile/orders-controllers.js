@@ -1,6 +1,5 @@
 const { validationResult } = require('express-validator');
 
-const Products = require('../../models/products'); //For product image
 const HttpError = require('../../models/http-error');
 const Orders = require('../../models/orders');
 
