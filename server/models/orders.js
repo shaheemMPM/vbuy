@@ -20,6 +20,7 @@ const orderSchema = new Schema({
         mobile: { type: String, required: true },
         altMobile: { type: String, required: false }
     },
+    currentStatus: {type: String, required: true, default:"PLACED"},
     modeOfPayment: { type: String, required: true },
     discountPrice: { type: String, required: true },
     totalSgst: { type: String, required: true },

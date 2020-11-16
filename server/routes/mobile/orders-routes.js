@@ -8,9 +8,9 @@ const router = express.Router();
 
 router.use(checkAuth);
 
-router.get('/', ordersController.getProducts);
+router.get('/', ordersController.getOrders);
 
-router.get('/:pid', ordersController.getProductsById);
+router.get('/:pid', ordersController.getOrderById);
 
 router.post(
   '/',

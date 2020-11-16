@@ -1,37 +1,37 @@
 const { validationResult } = require('express-validator');
 
-const Products = require('../../models/products');
-const SubCategory = require('../../models/subcategories');
-const Category = require('../../models/categories');
-const Shops = require('../../models/shops');
+const Products = require('../../models/products'); //For product image
 const HttpError = require('../../models/http-error');
 const Orders = require('../../models/orders');
 
-const getProducts = async (req, res, next) =>{
-  let products;
+const getOrders = async (req, res, next) =>{
+  let orders;
+  let userId = req.userData.userId;
+
   try {
-    products = await Products.find();
+    orders = await Orders.find({userId : userId}).select('productDetails.productId productDetails.quantity currentStatus');
   } catch (error) {
     return next('Something went wrong', 500);
   }
-  res.status(200).json({products});
+
+  res.status(200).json({orders});
 }
 
-const getProductsById = async(req, res, next) => {
-  const productId = req.params.pid;
-  let product;
+const getOrderById = async(req, res, next) => {
+  const orderId = req.params.pid;
+  let order;
 
   try {
-    product = await Products.findById(productId);
+    order = await Orders.findById(orderId);
   } catch (error) {
-    return next('Something went wrong, could not able to find product for given id.', 500);
+    return next('Something went wrong, could not able to find order for given id.', 500);
   }
 
-  if (!product) {
-    return next(new HttpError('Could not find a product for the provided id.', 404));
+  if (!order) {
+    return next(new HttpError('Could not find a order for the provided id.', 404));
   }
   
-  res.json({ product });
+  res.json({ order });
 };
 
 const createOrder = async(req, res, next) => {
@@ -65,6 +65,6 @@ const createOrder = async(req, res, next) => {
   res.status(201).json({ order: createdOrder });
 };
 
-exports.getProducts = getProducts;
-exports.getProductsById = getProductsById;
+exports.getOrders = getOrders;
+exports.getOrderById = getOrderById;
 exports.createOrder = createOrder;
