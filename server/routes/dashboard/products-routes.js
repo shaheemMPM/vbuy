@@ -14,6 +14,8 @@ router.get('/:pid', productsController.getProductsById);
 
 router.get('/subcategory/:scid', productsController.getProductsBySubcategoryId);
 
+router.get('/shop/:sid', productsController.getProductNamesByShopId);
+
 router.post(
   '/',
   [
