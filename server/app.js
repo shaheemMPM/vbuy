@@ -30,7 +30,7 @@ const app = express();
 
 app.use(cors());
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 
 // dashboard route initializing
 app.use('/api/dashboard/v1/shops', shopsRoutes);

@@ -126,7 +126,7 @@ const updateProduct = async(req, res, next) => {
 
   let productId = req.params.pid;
   let product;
-  const { name, description, amount, batchCode, image, sgst, cgst } = req.body;
+  const { name, description, amount, batchCode, sgst, cgst } = req.body;
 
   try {
     product = await Products.findById(productId);
@@ -142,7 +142,6 @@ const updateProduct = async(req, res, next) => {
   product.description = description;
   product.amount = amount;
   product.batchCode = batchCode;
-  product.image = image;
   product.sgst = sgst;
   product.cgst = cgst;
 
@@ -192,7 +191,6 @@ const deleteProduct = async(req, res, next) => {
       return next(new HttpError('Could not delete the product from the offer for the provided id.', 500));
     }
   }
-
 
   try {
     await product.remove();
@@ -256,7 +254,6 @@ const removeProductPopular = async (req, res, next) => {
 	res.status(200).json({ product });
 }
 
-
 const updateSizeChart = async (req, res, next) => {
 	const productId = req.params.pid;
   const {size_chart} = req.body;
@@ -313,6 +310,34 @@ const updatePinCode = async (req, res, next) => {
 	res.status(200).json({ product });
 }
 
+const updateImages = async (req, res, next) => {
+	const productId = req.params.pid;
+  const {image} = req.body;
+
+	let product;
+
+	try {
+		product = await Products.findById(productId);
+	} catch (error) {
+		return next(new HttpError('Could not find a product for the provided id.', 500));
+	}
+
+	if (!product) {
+		return next(new HttpError('Could not find a product for the provided id.', 404));
+	}
+
+	product.image = image;
+
+	try {
+		await product.save();
+	} catch (error) {
+    console.log(error);
+		return next(new HttpError('updating product images failed', 500));
+	}
+
+	res.status(200).json({ product });
+}
+
 const toggleStatus = async(req, res, next) => {
   let productId = req.params.pid;
   let product;
@@ -350,4 +375,5 @@ exports.addProductPopular = addProductPopular;
 exports.removeProductPopular = removeProductPopular;
 exports.updateSizeChart = updateSizeChart;
 exports.updatePinCode = updatePinCode;
+exports.updateImages = updateImages;
 exports.toggleStatus = toggleStatus;
