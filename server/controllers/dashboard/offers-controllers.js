@@ -258,6 +258,7 @@ const removeProduct = async (req, res, next) => {
 
 	try {
 		await offer.save();
+		await product.save();
 	} catch (error) {
 		return next(new HttpError('Removing product from the offer failed', 500));
 	}
