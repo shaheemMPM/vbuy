@@ -12,6 +12,7 @@ const productsRoutes = require('./routes/dashboard/products-routes');
 const offersRoutes = require('./routes/dashboard/offers-routes');
 const adminRoutes = require('./routes/dashboard/admin-routes');
 const adminUserRoutes = require('./routes/dashboard/user-routes');
+const orderRoutes = require('./routes/dashboard/order-routes');
 
 // Importing mobile routes
 const userRoutes = require('./routes/mobile/user-routes');
@@ -41,6 +42,7 @@ app.use('/api/dashboard/v1/products', productsRoutes);
 app.use('/api/dashboard/v1/offers', offersRoutes);
 app.use('/api/dashboard/v1/admin', adminRoutes);
 app.use('/api/dashboard/v1/users', adminUserRoutes);
+app.use('/api/dashboard/v1/orders', orderRoutes);
 // mobile route initializing
 app.use('/api/mobile/v1/user', userRoutes);
 app.use('/api/mobile/v1/categories', mobCategoriesRoutes);
