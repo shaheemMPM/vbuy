@@ -11,6 +11,7 @@ const subcategoriesRoutes = require('./routes/dashboard/subcategories-routes.js'
 const productsRoutes = require('./routes/dashboard/products-routes');
 const offersRoutes = require('./routes/dashboard/offers-routes');
 const adminRoutes = require('./routes/dashboard/admin-routes');
+const adminUserRoutes = require('./routes/dashboard/user-routes');
 
 // Importing mobile routes
 const userRoutes = require('./routes/mobile/user-routes');
@@ -39,6 +40,7 @@ app.use('/api/dashboard/v1/subcategories', subcategoriesRoutes);
 app.use('/api/dashboard/v1/products', productsRoutes);
 app.use('/api/dashboard/v1/offers', offersRoutes);
 app.use('/api/dashboard/v1/admin', adminRoutes);
+app.use('/api/dashboard/v1/users', adminUserRoutes);
 // mobile route initializing
 app.use('/api/mobile/v1/user', userRoutes);
 app.use('/api/mobile/v1/categories', mobCategoriesRoutes);
