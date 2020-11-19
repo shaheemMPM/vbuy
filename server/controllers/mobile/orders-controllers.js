@@ -57,7 +57,8 @@ const createOrder = async(req, res, next) => {
     totalCgst,
     netAmount,
     orderImage,
-    totalItems: productDetails.length
+    totalItems: productDetails.length,
+    timestamp: Number(new Date())
   });
 
   try {
