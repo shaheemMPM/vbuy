@@ -6,7 +6,7 @@ const Orders = require('../../models/orders');
 const getOrders = async (req, res, next) => {
   let orders;
   try {
-    orders = await Orders.find().select('totalItems currentStatus netAmount');
+    orders = await Orders.find().select('totalItems currentStatus netAmount timestamp');
   } catch (error) {
     return next(new HttpError('Something went wrong, could not find orders.', 500));
   }
@@ -37,7 +37,7 @@ const getOrdersByStatus = async (req, res, next) => {
   let orders;
   
   try {
-    orders = await Orders.find({currentStatus: status}).select('totalItems currentStatus netAmount');
+    orders = await Orders.find({currentStatus: status}).select('totalItems currentStatus netAmount timestamp');
   } catch (error) {
     return next(new HttpError('Something went wrong, could not find orders for given status.', 500));
   }
