@@ -10,7 +10,7 @@ router.use(checkAuth);
 
 router.get('/', ordersController.getOrders);
 
-router.get('/:pid', ordersController.getOrderById);
+router.get('/:oid', ordersController.getOrderById);
 
 router.post(
   '/',
@@ -23,5 +23,7 @@ router.post(
   ],
   ordersController.createOrder
 );
+
+router.patch('/cancel/:oid', ordersController.cancelOrder);
 
 module.exports = router;
