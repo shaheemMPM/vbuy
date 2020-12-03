@@ -6,7 +6,7 @@ const Orders = require('../../models/orders');
 const getOrders = async (req, res, next) => {
   let orders;
   try {
-    orders = await Orders.find().select('totalItems currentStatus netAmount timestamp');
+    orders = await Orders.find().select('totalItems currentStatus netAmount timestamp').sort({timestamp: "desc"});
   } catch (error) {
     return next(new HttpError('Something went wrong, could not find orders.', 500));
   }

@@ -9,7 +9,7 @@ const getOrders = async (req, res, next) =>{
   let userId = req.userData.userId;
 
   try {
-    orders = await Orders.find({userId : userId}).select('totalItems currentStatus orderImage timestamp');
+    orders = await Orders.find({userId : userId}).select('totalItems currentStatus orderImage timestamp').sort({timestamp: "desc"});
   } catch (error) {
     return next('Something went wrong', 500);
   }
