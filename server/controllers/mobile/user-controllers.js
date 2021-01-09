@@ -7,6 +7,8 @@ const password_generator = require('generate-password');
 const HttpError = require('../../models/http-error');
 const User = require('../../models/user');
 
+const serviceKey = require('../../config/servicekey.json');
+
 const signup = async (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -250,12 +252,19 @@ const changePassword = async (req, res, next) => {
 }
 
 async function sendMail(name, email, password, forgot) {
+	
+	const FROM_MAIL = 'info@vbuyeasypurchase.com';
+
     var transporter = nodemailer.createTransport({
-        service: 'gmail',
+		host: 'smtp.gmail.com',
+		port: 465, 
+		secure: true,
         auth: {
-            user: 'nexerotech@gmail.com',
-            pass: '3000Shits!'
-        }
+			type: 'OAuth2',
+			user: FROM_MAIL,
+			serviceClient: serviceKey.client_id,
+			privateKey: serviceKey.private_key
+		},
 	});
 	
 	let mailText, mailSubject;
@@ -272,7 +281,7 @@ async function sendMail(name, email, password, forgot) {
 	}
       
     var mailOptions = {
-        from: 'nexerotech@gmail.com',
+        from: FROM_MAIL,
         to: email,
         subject: mailSubject,
         text: mailText
@@ -280,6 +289,7 @@ async function sendMail(name, email, password, forgot) {
 	};
 	
 	try {
+		await transporter.verify();
 		let info = await transporter.sendMail(mailOptions);
 		console.log('Email sent: ' + info.response);
 	} catch(err) {
