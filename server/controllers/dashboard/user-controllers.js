@@ -38,7 +38,8 @@ const getUserById = async (req, res, next) => {
                     name: user.name, 
                     _id: user._id, 
                     mobile: user.mobile, 
-                    email: user.email, 
+                    email: user.email,
+                    place: user.place, 
                     orders: orders,
                     timestamp: user._id.getTimestamp()
                   } 

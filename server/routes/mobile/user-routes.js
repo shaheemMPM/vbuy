@@ -10,6 +10,7 @@ router.post(
   [
     check('name').not().isEmpty(),
     check('email').isEmail(),
+    check('place').not().isEmpty()
   ],
   userController.signup
 );

@@ -15,7 +15,7 @@ const signup = async (req, res, next) => {
 		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
   
-	let { name, email, mobile } = req.body;
+	let { name, email, mobile, place } = req.body;
 
 	email = email.toLowerCase();
   
@@ -33,7 +33,7 @@ const signup = async (req, res, next) => {
 	}
 
 	let password = password_generator.generate({
-		length: 15,
+		length: 8,
 		numbers: true
 	});
   
@@ -57,6 +57,7 @@ const signup = async (req, res, next) => {
 		name,
 		email,
 		mobile,
+		place,
 		password: hashedPassword
 	});
   
