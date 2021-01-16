@@ -6,6 +6,7 @@ const Category = require('../../models/categories');
 const SubCategory = require('../../models/subcategories');
 const Products = require('../../models/products');
 const Offers = require('../../models/offers');
+const Sales = require('../../models/sales');
 
 const getShops = async (req, res, next) => {
   let shops;
@@ -32,8 +33,26 @@ const getShopById = async (req, res, next) => {
     return next(new HttpError('Could not find a shop for the provided id.', 404));
   }
 
-  res.json({ shop });
-};
+  res.status(200).json({ shop });
+}
+
+const getSalesByShopId = async (req, res, next) => {
+  const shopId = req.params.sid;
+
+  let sales;
+
+  try {
+    sales = await Sales.find({shopId: shopId});
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not find a sales for given shop id.', 500));
+  }
+
+  if (!sales) {
+    return next(new HttpError('Could not find a sales for the provided shop id.', 404));
+  }
+
+  res.status(200).json({ sales });
+}
 
 const createShop = async (req, res, next) => {
   const errors = validationResult(req);
@@ -57,7 +76,7 @@ const createShop = async (req, res, next) => {
   }
 
   res.status(201).json({ shop: createdShop });
-};
+}
 
 const updateShop = async (req, res, next) => {
   const errors = validationResult(req);
@@ -92,7 +111,7 @@ const updateShop = async (req, res, next) => {
   }
 
   res.status(200).json({ shop });
-};
+}
 
 const deleteShop = async (req, res, next) => {
   const shopId = req.params.sid;
@@ -174,10 +193,11 @@ const deleteShop = async (req, res, next) => {
     return next(new HttpError('Could not delete a shop for the provided id.', 500));
   }
   res.status(200).json({ message: 'Deleted shop.' });
-};
+}
 
 exports.getShops = getShops;
 exports.getShopById = getShopById;
 exports.createShop = createShop;
 exports.updateShop = updateShop;
 exports.deleteShop = deleteShop;
+exports.getSalesByShopId = getSalesByShopId;

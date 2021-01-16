@@ -12,6 +12,8 @@ router.get('/', shopsControllers.getShops);
 
 router.get('/:sid', shopsControllers.getShopById);
 
+router.get('/sales/:sid', shopsControllers.getSalesByShopId);
+
 router.post(
   '/',
   [

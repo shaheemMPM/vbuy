@@ -19,4 +19,17 @@ router.patch(
     orderControllers.updateOrderStatus
 );
 
+router.post(
+    '/sale', 
+    [
+        check('productId').not().isEmpty(),
+        check('selectedSize').not().isEmpty(),
+        check('quantity').not().isEmpty(),
+        check('orderId').not().isEmpty(),
+        check('userId').not().isEmpty(),
+        check('timestamp').not().isEmpty()
+    ],
+    orderControllers.createSale
+)
+
 module.exports = router;

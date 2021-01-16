@@ -7,7 +7,8 @@ const orderSchema = new Schema({
     productDetails: [{
         productId: { type: ObjectId, required: true },
         selectedSize: { type: String, required: false },
-        quantity: { type: String, required: true }
+        quantity: { type: String, required: true },
+        paidOff: { type: Boolean, required: true, default: false }
     }],
     userId: { type: ObjectId, required: true },
     address: {
@@ -21,7 +22,6 @@ const orderSchema = new Schema({
         altMobile: { type: String, required: false }
     },
     currentStatus: {type: String, required: true, default:"PLACED"},
-    paidOff: { type: Boolean, required: true, default: false },
     modeOfPayment: { type: String, required: true },
     discountPrice: { type: String, required: true },
     totalSgst: { type: String, required: true },
