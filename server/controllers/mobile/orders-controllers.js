@@ -2,7 +2,9 @@ const { validationResult } = require('express-validator');
 
 const HttpError = require('../../models/http-error');
 const Orders = require('../../models/orders');
-const Products = require('../../models/products');
+const nodemailer = require("nodemailer");
+
+const serviceKey = require('../../config/servicekey.json');
 
 const getOrders = async (req, res, next) =>{
   let orders;
@@ -34,28 +36,11 @@ const getOrderById = async(req, res, next) => {
   if (!order) {
     return next(new HttpError('Could not find a order for the provided id.', 404));
   }
-
-  let productDetails = order.productDetails;
-  let productIds = productDetails.map(prod => {return prod.productId});
-
-  let productNames;
-
-  try {
-    productNames = await Products.find({'_id': {$in: productIds}}).select('name');
-  } catch (error) {
-    return next('Something went wrong, could not able to find product names for given ids.', 500);
-  }
-
-  if (!productNames) {
-    return next(new HttpError('Could not find a product names for the provided ids.', 404));
-  }
-
-  let newOrder = {...order._doc, productNames: productNames};
   
-  res.json({ order: newOrder });
+  res.json({ order: order });
 }
 
-const createOrder = async(req, res, next) => {
+const createOrder = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return next(new HttpError('Invalid inputs passed, please check your data.', 422));
@@ -64,6 +49,7 @@ const createOrder = async(req, res, next) => {
   const { productDetails, address, modeOfPayment, discountPrice, totalSgst, totalCgst, netAmount, orderImage} = req.body;
 
   let userId = req.userData.userId;
+  let userEmail = req.userData.email;
 
   const createdOrder = new Orders({
     productDetails,
@@ -78,6 +64,8 @@ const createOrder = async(req, res, next) => {
     totalItems: productDetails.length,
     timestamp: Number(new Date())
   });
+
+  sendMail(userEmail, netAmount);
 
   try {
     await createdOrder.save();
@@ -114,6 +102,46 @@ const cancelOrder = async (req, res, next) => {
 
   res.status(200).json({ order });
 
+}
+
+async function sendMail(email, netAmount) {
+
+  let mailContent = `
+                      <p>
+                        Your order with a net amount of ${netAmount}₹ has been placed. Thanks for purchasing with VBuy.
+                      </p>
+                    `
+	
+	const FROM_MAIL = 'info@vbuyeasypurchase.com';
+
+    var transporter = nodemailer.createTransport({
+		host: 'smtp.gmail.com',
+		port: 465, 
+		secure: true,
+        auth: {
+			type: 'OAuth2',
+			user: FROM_MAIL,
+			serviceClient: serviceKey.client_id,
+			privateKey: serviceKey.private_key
+		},
+	});
+  
+  let mailSubject = 'VBuy Purchase Invoice';
+      
+  var mailOptions = {
+      from: FROM_MAIL,
+      to: email,
+      subject: mailSubject,
+      html: mailContent        
+	};
+	
+	try {
+		await transporter.verify();
+		let info = await transporter.sendMail(mailOptions);
+		console.log('Email sent: ' + info.response);
+	} catch(err) {
+		console.log(err);
+	}
 }
 
 exports.getOrders = getOrders;
