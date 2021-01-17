@@ -99,6 +99,22 @@ const createSale = async (req, res, next) => {
     return next(new HttpError('Could not find a prodcut for the provided id.', 404));
   }
 
+  let order;
+
+  try {
+    order = await Orders.findById(orderId);
+  } catch (error) {
+    return next(new HttpError('Something went wrong, could not find order for given id.', 500));
+  }
+
+  if (!order) {
+    return next(new HttpError('Could not find a order for the provided id.', 404));
+  }
+
+  let productIndex = order.productDetails.map(e => e.productId).indexOf(productId);
+
+  order.productDetails[productIndex].paidOff = true;
+
   let shopId, amount, offerAmount;
 
   shopId = product.shopId;
@@ -119,6 +135,7 @@ const createSale = async (req, res, next) => {
 
   try {
     await createdSale.save();
+    await order.save();
   } catch (error) {
     console.log(error);
     return next(new HttpError('Creating sale failed', 500));
