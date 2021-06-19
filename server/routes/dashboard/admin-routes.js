@@ -1,7 +1,7 @@
-const express = require('express');
-const { check } = require('express-validator');
+const express = require("express");
+const { check } = require("express-validator");
 
-const adminController = require('../../controllers/dashboard/admin-controllers');
+const adminController = require("../../controllers/dashboard/admin-controllers");
 
 const router = express.Router();
 
@@ -16,10 +16,10 @@ const router = express.Router();
 // );
 
 router.post(
-  '/login', 
+  "/login",
   [
-    check('email').normalizeEmail().isEmail(),
-    check('password').isLength({ min: 8 })
+    check("email").normalizeEmail().isEmail(),
+    check("password").isLength({ min: 8 }),
   ],
   adminController.login
 );

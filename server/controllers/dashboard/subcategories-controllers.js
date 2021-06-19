@@ -1,175 +1,213 @@
-const { validationResult } = require('express-validator');
+const { validationResult } = require("express-validator");
 
-const HttpError = require('../../models/http-error');
-const SubCategory = require('../../models/subcategories');
-const Category = require('../../models/categories');
-const Shop = require('../../models/shops');
-const Product = require('../../models/products');
+const HttpError = require("../../models/http-error");
+const SubCategory = require("../../models/subcategories");
+const Category = require("../../models/categories");
+const Shop = require("../../models/shops");
+const Product = require("../../models/products");
 
 const getSubCategories = async (req, res, next) => {
-	let subcategories;
-	try {
-		subcategories = await SubCategory.find();
-	} catch (error) {
-		return next(new HttpError('Reading categories failed', 500));
-	}
+  let subcategories;
+  try {
+    subcategories = await SubCategory.find();
+  } catch (error) {
+    return next(new HttpError("Reading categories failed", 500));
+  }
 
-	res.status(200).json({subcategories});
-}
+  res.status(200).json({ subcategories });
+};
 
 const getSubCategoryById = async (req, res, next) => {
-	const subcategoryId = req.params.scid;
-	let subcategory;
-	
-	try {
-		subcategory = await SubCategory.findById(subcategoryId);
-	} catch(error) {
-		return next(new HttpError('Reading subcategories failed', 500));
-	}
+  const subcategoryId = req.params.scid;
+  let subcategory;
 
-	if (!subcategory) {
-		return next(new HttpError('Could not find a subcategory for the provided id.', 404));
-	}
+  try {
+    subcategory = await SubCategory.findById(subcategoryId);
+  } catch (error) {
+    return next(new HttpError("Reading subcategories failed", 500));
+  }
 
-	res.status(200).json({ subcategory });
-}
+  if (!subcategory) {
+    return next(
+      new HttpError("Could not find a subcategory for the provided id.", 404)
+    );
+  }
 
-const getSubcategoryByCategoryId = async (req, res, next) =>{
-	const categoryId = req.params.cid;
-	let subcategories;
+  res.status(200).json({ subcategory });
+};
 
-	try {
-		subcategories = await SubCategory.find({categoryId: categoryId});
-	} catch (error) {
-		return next(new HttpError('Reading subcategories with given category id failed.', 500));
-	}
+const getSubcategoryByCategoryId = async (req, res, next) => {
+  const categoryId = req.params.cid;
+  let subcategories;
 
-	if(!subcategories){
-		return next(new HttpError('Could not find subcategories for the provided category id.', 404));
-	}
+  try {
+    subcategories = await SubCategory.find({ categoryId: categoryId });
+  } catch (error) {
+    return next(
+      new HttpError("Reading subcategories with given category id failed.", 500)
+    );
+  }
 
-	res.status(200).json({ subcategories });
-}
+  if (!subcategories) {
+    return next(
+      new HttpError(
+        "Could not find subcategories for the provided category id.",
+        404
+      )
+    );
+  }
+
+  res.status(200).json({ subcategories });
+};
 
 const createSubCategory = async (req, res, next) => {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
-	}
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
 
-	const { name, image, categoryId, shopId } = req.body;
+  const { name, image, categoryId, shopId } = req.body;
 
-	let category;
+  let category;
 
-	try {
-		category = await Category.findById(categoryId);
-	} catch (error) {
-		return next(new HttpError('Something went wrong, could not find a category with given id.', 500));
-	}
+  try {
+    category = await Category.findById(categoryId);
+  } catch (error) {
+    return next(
+      new HttpError(
+        "Something went wrong, could not find a category with given id.",
+        500
+      )
+    );
+  }
 
-	if(!category){
-		return next(new HttpError('Could not find a category for the provided id.', 404));
-	}
+  if (!category) {
+    return next(
+      new HttpError("Could not find a category for the provided id.", 404)
+    );
+  }
 
-	let shop;
-	
-	try {
-		shop = await Shop.findById(shopId);
-	} catch (error) {
-		return next(new HttpError('Something went wrong, could not find a shop with given id.', 500));
-	}
+  let shop;
 
-	if(!shop){
-		return next(new HttpError('Could not find a shop for the provided id.', 404));
-	}
+  try {
+    shop = await Shop.findById(shopId);
+  } catch (error) {
+    return next(
+      new HttpError(
+        "Something went wrong, could not find a shop with given id.",
+        500
+      )
+    );
+  }
 
-	const createdSubCategory = new SubCategory({
-		name,
-		image,
-		categoryId,
-		shopId
-	});
+  if (!shop) {
+    return next(
+      new HttpError("Could not find a shop for the provided id.", 404)
+    );
+  }
 
-	try {
-		await createdSubCategory.save();
-	} catch (error) {
-		return next(new HttpError('Creating subcategory failed', 500));
-	}
+  const createdSubCategory = new SubCategory({
+    name,
+    image,
+    categoryId,
+    shopId,
+  });
 
-	res.status(201).json({ subcategory: createdSubCategory });
-}
+  try {
+    await createdSubCategory.save();
+  } catch (error) {
+    return next(new HttpError("Creating subcategory failed", 500));
+  }
+
+  res.status(201).json({ subcategory: createdSubCategory });
+};
 
 const updateSubCategory = async (req, res, next) => {
-	const errors = validationResult(req);
-	if (!errors.isEmpty()) {
-		return next(new HttpError('Invalid inputs passed, please check your data.', 422));
-	}
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return next(
+      new HttpError("Invalid inputs passed, please check your data.", 422)
+    );
+  }
 
-	const { name, image } = req.body;
+  const { name, image } = req.body;
 
-	const subcategoryId = req.params.scid;
+  const subcategoryId = req.params.scid;
 
-	let updatedSubCategory;
-	try {
-		updatedSubCategory = await SubCategory.findById(subcategoryId);
-	} catch (error) {
-		return next(new HttpError('Reading sub categories failed', 500));
-	}
+  let updatedSubCategory;
+  try {
+    updatedSubCategory = await SubCategory.findById(subcategoryId);
+  } catch (error) {
+    return next(new HttpError("Reading sub categories failed", 500));
+  }
 
-	if(!updatedSubCategory){
-		return next(new HttpError('Could not find a sub category for the provided id.', 404));
-	}
+  if (!updatedSubCategory) {
+    return next(
+      new HttpError("Could not find a sub category for the provided id.", 404)
+    );
+  }
 
-	updatedSubCategory.name = name;
-	updatedSubCategory.image = image;
-	
-	try {
-		await updatedSubCategory.save();
-	} catch (error) {
-		return next(new HttpError('Updating subcategories failed', 500));
-	}
+  updatedSubCategory.name = name;
+  updatedSubCategory.image = image;
 
-	res.status(200).json({ updatedSubCategory });
-}
+  try {
+    await updatedSubCategory.save();
+  } catch (error) {
+    return next(new HttpError("Updating subcategories failed", 500));
+  }
+
+  res.status(200).json({ updatedSubCategory });
+};
 
 const deleteSubCategory = async (req, res, next) => {
-	const subcategoryId = req.params.scid;
-	let subcategory;
+  const subcategoryId = req.params.scid;
+  let subcategory;
 
-	try {
-		subcategory = await SubCategory.findById(subcategoryId);
-	} catch (error) {
-		return next(new HttpError('Reading categories failed', 500));
-	}
+  try {
+    subcategory = await SubCategory.findById(subcategoryId);
+  } catch (error) {
+    return next(new HttpError("Reading categories failed", 500));
+  }
 
-	if (!subcategory) {
-		return next(new HttpError('Could not find a sub category for the provided id', 404));
-	}
+  if (!subcategory) {
+    return next(
+      new HttpError("Could not find a sub category for the provided id", 404)
+    );
+  }
 
-	let products;
+  let products;
 
-	try {
-		products = await Product.find({ subcategoryId: subcategoryId });
-	} catch(error) {
-		return next(new HttpError('Reading products failed', 500));
-	}
+  try {
+    products = await Product.find({ subcategoryId: subcategoryId });
+  } catch (error) {
+    return next(new HttpError("Reading products failed", 500));
+  }
 
-	if(products) {
-		try {
-			await Product.find({ subcategoryId: subcategoryId }).remove();
-		} catch(error) {
-			return next(new HttpError('Coult not delete products for the provided subcategoryId', 500));
-		}
-	}
+  if (products) {
+    try {
+      await Product.find({ subcategoryId: subcategoryId }).remove();
+    } catch (error) {
+      return next(
+        new HttpError(
+          "Coult not delete products for the provided subcategoryId",
+          500
+        )
+      );
+    }
+  }
 
-	try {
-		await subcategory.remove();
-	} catch (error) {
-		return next(new HttpError('Could not delete a sub category for the provided id.', 500));
-	}
+  try {
+    await subcategory.remove();
+  } catch (error) {
+    return next(
+      new HttpError("Could not delete a sub category for the provided id.", 500)
+    );
+  }
 
-	res.status(200).json({ message: 'Deleted subcategory.' });
-}
+  res.status(200).json({ message: "Deleted subcategory." });
+};
 
 exports.getSubCategories = getSubCategories;
 exports.getSubCategoryById = getSubCategoryById;
